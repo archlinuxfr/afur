@@ -33,24 +33,24 @@ class Pureftpd
 		if (!file_exists ($folder))
 		{
 			$old_umask = umask (0);
-			if (!@mkdir ($folder, 0755))
+			if (!@mkdir ($folder, 0775))
 			{
 				umask ($old_umask);
 				return false;
 			}
 			umask ($old_umask);
 		}
-		$q = 'delete from users where name = ?';
 		$param = array ($user);
-		if ($this->db->execute ($q, $param)===false)
+		if ($this->db->execute ($GLOBALS['conf']['pureftpd_db_delete'], 
+		  $param)===false)
 			return false;
 		$passwd = mkpasswd (8);
-		$q = 'insert into users (name,password,uid,gid,dir) values (?,?,?,?,?);';
 		$param = array ($user, md5($passwd),
 		  $GLOBALS['conf']['pureftpd_uid'],
 		  $GLOBALS['conf']['pureftpd_gid'], 
 		  $GLOBALS['conf']['pureftpd_dir'] . '/' . $user);
-		if ($this->db->execute ($q, $param)===false)
+		if ($this->db->execute ($GLOBALS['conf']['pureftpd_db_insert'], 
+		  $param)===false)
 			return false;
 		$str = 'SRV_URI="' . $GLOBALS['conf']['pureftpd_uri'] . '"' . "\n";
 		$str .= 'USER="' . $user . '"' . "\n";

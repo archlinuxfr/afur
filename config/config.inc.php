@@ -23,4 +23,11 @@ $conf['pureftpd_db_dsn'] = 'mysql:dbname=pureftpd;host=localhost';
 $conf['pureftpd_db_user'] = 'pureftpd';
 $conf['pureftpd_db_passwd'] = 'toto';
 
+
+/* Delete and insert user into pure-ftpd database:
+ * delete requires 1 parameter: name
+ * insert requires 5: name,password,uid,gid,dir
+ */
+$conf['pureftpd_db_delete'] = 'delete from users where name = ?;';
+$conf['pureftpd_db_insert'] = 'insert into users (name,password,uid,gid,dir) values (?,?,?,?,?);';
 ?>
