@@ -1,0 +1,53 @@
+Configuration de pure-ftpd:
+ - compilé avec l'option --with-mysql
+ - exemple de schéma de base de données:
+
+
+create database pureftpd;
+use pureftpd;
+
+create table users
+(
+	name varchar(32) binary not null primary key,
+	password varchar(64) binary not null,
+	uid varchar(32) binary not null,
+	gid varchar(32) binary not null,
+	dir varchar(128) binary not null
+);
+
+grant all on pureftpd.* to 'pureftpd'@'localhost' identified by 'toto';
+
+
+
+  - configuration de la base/utilisateur/mot de passe + requêtes sql dans 
+"config/config.inc.php"
+
+
+Configuration des répertoires:
+  - Fichiers à modifier:
+   * config/config.inc.php
+   * scripts/watch.sh
+   * scripts/parse_file
+
+
+Création de la base de données à l'aide de support/mysql.sql
+
+Configuration des permissions:
+
+Au choix:
+  - l'application web + daemon doivent tourner sous le même utilisateur,
+ne pas oublier de modifier la configuration pure-ftpd de l'application pour
+avoir un mapping utilisateurs vers l'utilisateur de l'application.
+
+  - la partition hébergeant l'application doit être montées avec les acl:
+mount -o remount,acl /chemin_partition
+
+l'utilisateur faisant tourner le serveur web et celui lancant le dameon doivent
+avoir les droits rw sur:
+ftp/
+html/pkg
+html/pkgbuild
+
+
+
+ - 
