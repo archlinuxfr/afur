@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+include_once ('/home/tuxce/public_html/afur/config/config.inc.php');
+include_once ($conf['lib'] . '/DB.class.php');
+include_once ($conf['lib'] . '/archive.class.php');
+include_once ($conf['lib'] . '/functions.php');
+
+$db = new DB($conf['db_dsn'], $conf['db_user'], $conf['db_passwd']);
+$archive = new Archive ($db);
+$archive->parse_descfile ($_SERVER['argv'][1], $_SERVER['argv'][2], $_SERVER['argv'][3]);
+$ret = $archive->save ();
+$db->close();
+if ($ret)
+{
+	echo $ret;
+	exit (0);
+}
+else
+	exit (1);
+
+?>
