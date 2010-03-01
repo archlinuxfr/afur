@@ -29,6 +29,8 @@ class Pureftpd
 	
 	public function generate($user)
 	{
+		if (!preg_match ('/^[a-z0-9]+$/', $user))
+			return false;
 		$folder = $GLOBALS['conf']['pureftpd_dir'] . '/' . $user;
 		if (!file_exists ($folder))
 		{
