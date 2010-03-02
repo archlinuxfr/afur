@@ -40,10 +40,11 @@ in_array ()
 
 add_repo ()
 {
-	pushd "$PKG_DIR"/"$1"
+	pushd "$PKG_DIR"/"$1" &> /dev/null
+	log "+ en attente du verrou repo-add..."
 	while [ -f "$REPO_NAME".db.tar.gz.lck ]; do sleep 1; done
-	repo-add "$REPO_NAME".db.tar.gz "$2"
-	popd
+	repo-add "$REPO_NAME".db.tar.gz "$2" &> /dev/null && log "+ ajout de $2" || return 1
+	popd &> /dev/null
 }
 
 
@@ -53,24 +54,27 @@ add_any_repo ()
 {
 	for arch in "${ARCH[@]}" 
 	do
-		ln -sf "$PKG_DIR"/any/"$1" "$PKG_DIR"/"$arch"
+		# Un ln -sf active un évenement "delete", donc ln -s &> /dev/null
+		# TODO penser à nettoyer les liens obsolètes
+		ln -s "$PKG_DIR"/any/"$1" "$PKG_DIR"/"$arch" &> /dev/null
 		add_repo "$arch" "$1"
 	done
 }
 
 del_repo ()
 {
-	pushd "$PKG_DIR"/"$1"
+	pushd "$PKG_DIR"/"$1" &> /dev/null
+	log "+ en attente du verrou repo-remove..."
 	while [ -f "$REPO_NAME".db.tar.gz.lck ]; do sleep 1; done
-	repo-remove "$REPO_NAME".db.tar.gz "$2"
-	popd
+	repo-remove "$REPO_NAME".db.tar.gz "$2" &> /dev/null && log "+ suppression de $2" || return 1
+	popd &> /dev/null
 }
 
 del_any_repo ()
 {
 	for arch in "${ARCH[@]}" 
 	do
-		rm -v "$PKG_DIR/$arch/$1"
+		rm "$PKG_DIR/$arch/$1"
 	done
 }
 
@@ -86,13 +90,13 @@ pkg_archive ()
 	log "+ test $arch --"
 	if [ "$arch" = "any" ]; then
 		log "+ any"
-		mv "$archive" "$PKG_DIR"/any
+		mv "$archive" "$PKG_DIR"/any &> /dev/null
 		add_any_repo "$archive"
 	else
 		log "+ $arch"
 		in_array "$arch" "${ARCH[@]}" || return 1
 		log "+ copie dans le dépôt"
-		mv "$archive" "$PKG_DIR"/"$arch"
+		mv "$archive" "$PKG_DIR"/"$arch" &> /dev/null
 		add_repo "$arch" "$archive"
 	fi
 	return 0
@@ -126,8 +130,8 @@ new_archive ()
 	fi
 	cd "$WORK_DIR"
 	local tmp_dir=$(mktemp -d --tmpdir="$WORK_DIR")
-	mv "$archive" "$tmp_dir"
-	pushd "$tmp_dir"
+	mv "$archive" "$tmp_dir" &> /dev/null
+	pushd "$tmp_dir" &> /dev/null
 	if [ "$file" != "${file%pkg.tar.*}" ]
 	then
 		pkg_archive "$file" "$user"
@@ -135,6 +139,7 @@ new_archive ()
 		src_archive "$file"
 	fi
 	ret=$?
+	popd &> /dev/null
 	rm -rf $tmp_dir
 	return $ret
 }
@@ -170,7 +175,7 @@ watch_upload_dir ()
 
 watch_pkg ()
 {
-	inotifywait -r -q -e delete --format "%w%f" -m "$PKG_DIR" | while read archive
+	inotifywait --exclude="$REPO_NAME.db.tar.gz" -r -q -e delete --format "%w%f" -m "$PKG_DIR" | while read archive
 	do
 		[ -z "$archive" ] && continue
 		local file=${archive##*/}
