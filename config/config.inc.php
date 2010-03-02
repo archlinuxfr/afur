@@ -1,15 +1,17 @@
 <?php
 
+$conf['base_url'] = '/';
 $conf['base'] = '/home/afur/afur';
 $conf['theme'] = 'default';
 
 $conf['pkg_dir'] = $conf['base'] . '/html/pkg';
 $conf['trash_dir'] = $conf['base'] . '/trash';
-$conf['pkg_url'] = '/pkg';
-$conf['pkgbuild_url'] = '/pkgbuild';
+$conf['pkg_url'] = $conf['base_url'] . 'pkg/';
+$conf['pkgbuild_url'] = $conf['base_url'] . 'pkgbuild/';
 
 $conf['lib'] = $conf['base'] . '/lib';
-$conf['templates'] = $conf['base'] . '/templates/' . $conf['theme'];
+$conf['templates'] = $conf['base'] . '/html/templates/' . $conf['theme'];
+$conf['templates_url'] = $conf['base_url'] . 'templates/' . $conf['theme'] . '/';
 
 $conf['db_dsn'] = 'mysql:dbname=afur;host=localhost';
 $conf['db_user'] = 'root';

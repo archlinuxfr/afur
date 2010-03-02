@@ -28,8 +28,14 @@ if (isset ($_GET['action']))
 				$template = 'user_connect.php';
 			break;
 		case 'search':
-			if (!isset ($_GET['q'])) break;
-			$packages = pkg_search ($db, array ('name' => $_GET['q']), $_GET['sort']);
+			$packages = pkg_search ($db, $_GET, 
+			  (isset ($_GET['sort'])) ? $_GET['sort'] : null);
+			 $search_criteria = '';
+			foreach ($_GET as $key=>$value)
+			{
+				if ($key == 'sort') continue;
+				$search_criteria .= "&$key=$value";
+			}
 			$template = 'pkg_search.php';
 			break;
 		case 'list':

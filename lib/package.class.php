@@ -198,17 +198,10 @@ class Package
 			$this->db->rollback ();
 			return false;
 		}
-		if ($this->remove_file())
-		{
-			$this->db->commit ();
-			$this->init();
-			return true;
-		}
-		else
-		{
-			$this->db->rollback ();
-			return false;
-		}
+		$this->db->commit ();
+		$this->init();
+		$this->remove_file();
+		return true;
 	}
 
 	public function update ()
@@ -364,6 +357,12 @@ function pkg_search (&$db, $tab, $sort=null, $asc=true)
 	$q_where = ' where true ';
 	$q_sort =  '';
 	$param = array ();
+	if (!empty ($tab['q']))
+	{
+		$q_where .= ' and (p.name like ? or p.description like ?)';
+		array_push ($param, '%' . $tab['q'] . '%');
+		array_push ($param, '%' . $tab['q'] . '%');
+	}
 	if (!empty ($tab['name']))
 	{
 		$q_where .= ' and p.name like ?';
@@ -381,7 +380,7 @@ function pkg_search (&$db, $tab, $sort=null, $asc=true)
 	}
 	if (!empty ($tab['maintainer']))
 	{
-		$q_where .= ' and u.name = ?';
+		$q_where .= ' and u.nick = ?';
 		array_push ($param, $tab['maintainer']);
 	}
 	if (!empty ($tab['user_id']))
@@ -398,7 +397,10 @@ function pkg_search (&$db, $tab, $sort=null, $asc=true)
 	elseif (!empty ($tab['outofdate']) and !$tab['outofdate'])
 		$q_where .= ' and not p.outofdate';
 	if (!empty ($sort))
-		$q_sort .= ' order by ' . $sort . ($asc) ? ' asc' : ' desc';
+	{
+		$q_sort .= ' order by ' . $sort;
+		$q_sort .= ($asc) ? ' asc' : ' desc';
+	}
 	$q .= $q_select . $q_from . $q_where . $q_sort;
 	return $db->fetch_all ($q, $param);
 }
