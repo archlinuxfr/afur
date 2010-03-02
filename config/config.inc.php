@@ -1,7 +1,7 @@
 <?php
 
 $conf['base'] = '/home/afur/afur';
-$conf['theme'] = 'archlinux.fr';
+$conf['theme'] = 'default';
 
 $conf['pkg_dir'] = $conf['base'] . '/html/pkg';
 $conf['trash_dir'] = $conf['base'] . '/trash';
