@@ -12,8 +12,8 @@
 <tr><td>E-Mail:</td><td><input type='text' name='mail' value='<?php echo $user->get ('mail'); ?>'/></td></tr>
 <tr><td>Nom:</td><td><input type='text' name='name' value='<?php echo $user->get ('name'); ?>'/></td></tr>
 <tr><td>Annoncer:</td><td><input type='checkbox' name='announce' value='1' <?php echo ($user->get ('announce')) ? 'checked="checked"' : ''; ?>/></td></tr>
-<tr><td>Mot de passe:</td><td><input type='passwd' name='passwd' value=''/></td></tr>
-<tr><td>Vérification:</td><td><input type='passwd' name='passwd_verif' value=''/></td></tr>
+<tr><td>Mot de passe:</td><td><input type='password' name='passwd' value=''/></td></tr>
+<tr><td>Vérification:</td><td><input type='password' name='passwd_verif' value=''/></td></tr>
 <?php if ($is_admin) : ?>
 <tr><td>Admin:</td><td><input type='checkbox' name='admin' value='1' <?php echo ($user->get ('admin')) ? 'checked="checked"' : ''; ?>/></td></tr>
 <?php endif; ?>

@@ -72,9 +72,9 @@ if (isset ($_GET['action']))
 				  or !$_POST['passwd']))
 					break;
 				if (!$_POST['user_id'])
-					$user = new User ($db, $_POST['user_id']);
-				else
 					$user = new User ($db);
+				else
+					$user = new User ($db, $_POST['user_id']);
 				if ($_POST['passwd'] == $_POST['passwd_verif'])
 				{
 					if ($is_admin)
