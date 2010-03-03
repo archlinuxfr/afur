@@ -122,7 +122,7 @@ class Package
 		else
 			$update = false;
 		$remove_filename = false;
-		if ($update and $this->filename != $archive->get ('filename'))
+		if ($update)
 		{
 			$remove_filename = true;
 			$path = $GLOBALS['conf']['pkg_dir'] . '/' . $this->arch;
@@ -168,28 +168,29 @@ class Package
 				return false;
 			}
 		if ($remove_filename)
-			$this->remove_file ($filename, $path);
+			$this->remove_file ($filename, $path, true);
 		$this->db->commit ();
 		return true;
 	}
 
-	private function remove_file ($filename=null, $path=null)
+	private function remove_file ($filename, $path, $move=false)
 	{
-		if (empty ($filename))
+		if (!$move)
 		{
-			$filename = $GLOBALS['conf']['pkg_dir'] . '/' . $this->arch . '/' . $this->filename;
-			return @unlink ($filename);
+			return unlink ($path . '/' . $filename);
 		}
 		else
 		{
-			if (@rename ($path . '/' . $filename, $GLOBALS['conf']['trash_dir'] . '/' . $filename))
-				return @unlink ($GLOBALS['conf']['trash_dir'] . '/' . $filename);
+			if (rename ($path . '/' . $filename, $GLOBALS['conf']['trash_dir'] . '/' . $filename))
+				return unlink ($GLOBALS['conf']['trash_dir'] . '/' . $filename);
 		}
 		return false;
 	}
 
 	public function remove ()
 	{
+		$filename = $this->filename;
+		$path = $GLOBALS['conf']['pkg_dir'] . '/' . $this->arch;
 		$q='delete from packages where id = ?;';
 		$param = array ($this->id);
 		$this->db->begin ();
@@ -200,7 +201,7 @@ class Package
 		}
 		$this->db->commit ();
 		$this->init();
-		$this->remove_file();
+		$this->remove_file($filename, $path, false);
 		return true;
 	}
 
