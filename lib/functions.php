@@ -51,6 +51,19 @@ function redirect ($action, $var=null)
 	exit (0);
 }
 
+function connect_first ($action, $var=null)
+{
+	if (!empty ($var))
+	{
+		unset ($var['action']);
+	}
+	else
+		$var = array ();
+	$var['redirect'] = $action;
+	redirect ('connect', $var);
+}
+
+
 
 function join_files ($files, $dest)
 {

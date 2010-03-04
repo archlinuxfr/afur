@@ -24,8 +24,18 @@ switch ($action)
 		break;
 	case 'connect':
 		if (connect ())
-			redirect ('search');
+		{
+			unset ($_GET['action']);
+			$action_redirect = 'search';
+			if (!empty ($_GET['redirect']))
+			{
+				$action_redirect = $_GET['redirect'];
+				unset ($_GET['redirect']);
+			}
+			redirect ($action_redirect, $_GET);
+		}
 		else
+			$action_redirect = (isset ($_GET['redirect'])) ? $_GET['redirect'] : '';
 			$template = 'user_connect.php';
 		break;
 	case 'search':
@@ -68,14 +78,13 @@ switch ($action)
 		$template = 'user_search.php';
 		break;
 	case 'profile':
-		if ($is_connected)
-		{
-			if ($is_admin and isset ($_GET['user_id']))
-				$user = new User ($db, $_GET['user_id']);
-			else
-				$user = new User ($db, $user_id);
-			$template = 'user_profile.php';
-		}
+		if (!$is_connected)
+			connect_first ($action);
+		if ($is_admin and isset ($_GET['user_id']))
+			$user = new User ($db, $_GET['user_id']);
+		else
+			$user = new User ($db, $user_id);
+		$template = 'user_profile.php';
 		break;
 	case 'update':
 		if ($is_connected)
@@ -117,6 +126,8 @@ switch ($action)
 		}
 		break;
 	case 'create':
+		if (!$is_connected)
+			connect_first ($action);
 		if (!$is_admin) break;
 		$user = new User ($db);
 		$template = 'user_profile.php';
@@ -124,33 +135,40 @@ switch ($action)
 	case 'outofdate':
 		if (!isset ($_GET['p'])) break;
 		$pkg = new Package ($db, $_GET['p']);
-		if ($pkg->get('outofdate') and 
-		  (!$is_connected or ($user_id != $pkg->get('user_id') and !$is_admin)))
-			break;
-		$pkg->set_outofdate ();
+		if (!$pkg->get('outofdate') or 
+		  ($is_connected and ($user_id == $pkg->get('user_id') or $is_admin)))
+			$pkg->set_outofdate ();
 		redirect ('view', array ('p' => $_GET['p']));
 		break;
 	case 'adopt':
-		if (!isset ($_GET['p']) or !$is_connected) break;
+		if (!isset ($_GET['p'])) break;
+		if (!$is_connected)
+			connect_first ($action);
 		$pkg = new Package ($db, $_GET['p']);
 		$pkg->adopt ($user_id);
 		redirect ('view', array ('p' => $_GET['p']));
 		break;
 	case 'disown':
-		if (!isset ($_GET['p']) or !$is_connected) break;
+		if (!isset ($_GET['p'])) break;
+		if (!$is_connected)
+			connect_first ($action);
 		$pkg = new Package ($db, $_GET['p']);
 		if ($pkg->get('user_id') == $user_id)
 			$pkg->disown ();
 		redirect ('view', array ('p' => $_GET['p']));
 		break;
 	case 'remove':
-		if (!isset ($_GET['p']) or !$is_admin) break;
+		if (!isset ($_GET['p'])) break;
+		if (!$is_connected)
+			connect_first ($action);
+		if (!$is_admin) break;
 		$pkg = new Package ($db, $_GET['p']);
 		$pkg->remove ();
 		redirect ('search');
 		break;
 	case 'generate':
-		if (!$is_connected) break;
+		if (!$is_connected)
+			connect_first ($action);
 		$user = new User ($db, $user_id);
 		$dbf = new DB($conf['pureftpd_db_dsn'], $conf['pureftpd_db_user'], $conf['pureftpd_db_passwd']);
 		$ftp = new Pureftpd ($dbf);
