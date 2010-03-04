@@ -3,6 +3,7 @@
 <?php if (isset ($pkg)) : ?>
 <table>
 <tr><td>Nom:</td><td><?php echo $pkg->get ('name'); ?></td></tr>
+<tr><td>Description:</td><td><?php echo $pkg->get ('description'); ?></td></tr>
 <tr><td>Architecture:</td><td><?php echo $pkg->get ('arch'); ?></td></tr>
 <tr><td>Version:</td><td><?php echo $pkg->get ('version'); ?></td></tr>
 <tr><td>URL:</td><td><a href="<?php echo $pkg->get ('url'); ?>"><?php echo $pkg->get ('url'); ?></a></td></tr>

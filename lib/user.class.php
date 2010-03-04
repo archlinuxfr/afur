@@ -134,6 +134,55 @@ function check_user ($nick, $passwd)
 	else
 		return false;
 }
-		
+	
+function user_search (&$db, $tab, $sort=null, $asc=true)
+{
+	$q = 'select ';
+	$q_select = ' u.id as user_id, u.nick, u.mail, u.name, u.admin, 
+	  u.announce, u.date_reg ';
+	$q_from = ' from users u ';
+	$q_where = ' where true ';
+	$q_sort =  '';
+	$param = array ();
+	if (!empty ($tab['q']))
+	{
+		$q_where .= ' and (u.name like ? or u.nick like ?)';
+		array_push ($param, '%' . $tab['q'] . '%');
+		array_push ($param, '%' . $tab['q'] . '%');
+	}
+	if (!empty ($tab['nick']))
+	{
+		$q_where .= ' and u.nick like ?';
+		array_push ($param, '%' . $tab['nick'] . '%');
+	}
+	if (!empty ($tab['name']))
+	{
+		$q_where .= ' and u.name like ?';
+		array_push ($param, '%' . $tab['name'] . '%');
+	}
+	if (!empty ($tab['mail']))
+	{
+		$q_where .= ' and u.mail like ?';
+		array_push ($param, '%' . $tab['mail'] . '%');
+	}
+	if (!empty ($tab['admin']) and $tab['admin'])
+		$q_where .= ' and u.admin';
+	elseif (!empty ($tab['admin']) and !$tab['admin'])
+		$q_where .= ' and not u.admin';
+	if (!empty ($tab['announce']) and $tab['announce'])
+		$q_where .= ' and u.announce';
+	elseif (!empty ($tab['announce']) and !$tab['announce'])
+		$q_where .= ' and not u.announce';
+	if (!empty ($sort))
+	{
+		$q_sort .= ' order by ' . $sort;
+		$q_sort .= ($asc) ? ' asc' : ' desc';
+	}
+	$q .= $q_select . $q_from . $q_where . $q_sort;
+	return $db->fetch_all ($q, $param);
+}
+
+
+	
 
 ?>

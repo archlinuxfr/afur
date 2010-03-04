@@ -45,12 +45,10 @@ function format_date ($date)
 		<?php if ($is_connected) : ?>
 		<li><a href="?action=disconnect">Déconnexion</a></li>
 		<li><a href="?action=profile">Profil</a></li>
-		<?php if ($is_admin) : ?>
-		<li><a href="?action=create">Créer</a></li>
-		<?php endif; ?>
 		<?php else: ?>
 		<li><a href="?action=connect">Connexion</a></li>
 		<?php endif; ?>
+		<li><a href="?action=search_user">Utilisateurs</a></li>
 		<li><a href="/" title="">Recherche</a></li>
   </ul>
 
