@@ -116,6 +116,8 @@ new_archive ()
 	local archive="$1"
 	local ret=0
 	[ -z "$archive" ] && return 1
+	# Teste si le fichier n'a pas été effacé entre temps
+	[ ! -e "$archive" ] && return 1
 	log "+ récéption de '$archive'"
 	local file=${archive##*/}
 	local user=${archive%/*}
@@ -160,6 +162,10 @@ watch_upload_dir ()
 	p=$!
 	while :
 	do
+		# Attente puis revalidation des fichiers éventuellement 
+		# créés pendant la relance
+		sleep 1
+		find "$UPLOAD_DIR" -type f -name "*.tar.*" -exec echo touch "{}" \;
 		inotifywait -r -q -e create --format '%e' "$UPLOAD_DIR" | grep -q 'CREATE,ISDIR'
 		if [ -e "$UPLOAD_DIR/exit" ]; then
 			kill $p
@@ -178,6 +184,8 @@ watch_pkg ()
 	inotifywait --exclude="$REPO_NAME.db.tar.gz" -r -q -e delete --format "%w%f" -m "$PKG_DIR" | while read archive
 	do
 		[ -z "$archive" ] && continue
+		# Teste si le fichier n'a pas été effacé entre temps
+		[ ! -e "$archive" ] && continue
 		local file=${archive##*/}
 		local arch=${archive%/*}
 		local arch=${arch##*/}
