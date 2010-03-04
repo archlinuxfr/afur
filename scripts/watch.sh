@@ -165,7 +165,7 @@ watch_upload_dir ()
 		# Attente puis revalidation des fichiers éventuellement 
 		# créés pendant la relance
 		sleep 1
-		find "$UPLOAD_DIR" -type f -name "*.tar.*" -exec echo touch "{}" \;
+		find "$UPLOAD_DIR" -type f -name "*.tar.*" -exec touch "{}" \;
 		inotifywait -r -q -e create --format '%e' "$UPLOAD_DIR" | grep -q 'CREATE,ISDIR'
 		if [ -e "$UPLOAD_DIR/exit" ]; then
 			kill $p
