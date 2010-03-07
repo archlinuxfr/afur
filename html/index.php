@@ -110,7 +110,8 @@ switch ($action)
 			{
 				if ($is_admin)
 					$user->set_nick ($_POST['nick']);
-				$user->set_mail ($_POST['mail']);
+				if (check_email ($_POST['mail']))
+					$user->set_mail ($_POST['mail']);
 				$user->set_name ($_POST['name']);
 				if (isset ($_POST['announce']))
 				$user->set_announce ($_POST['announce']);
@@ -156,7 +157,10 @@ switch ($action)
 				if ($is_connected)
 					$pkg->set_outofdate ($user_id, $_POST['reason']);
 				else
-					$pkg->set_outofdate (null, $_POST['reason'], $_POST['mail']);
+				{
+					if (check_email ($_POST['mail']))
+						$pkg->set_outofdate (null, $_POST['reason'], $_POST['mail']);
+				}
 				redirect ('view', array ('p' => $_GET['p']));
 			}
 		}		
