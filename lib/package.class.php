@@ -334,7 +334,7 @@ class Package
 		return $this->db->select ($q, $param);
 	}
 
-	public function set_outofdate ()
+	public function set_outofdate ($user_id=null, $reason=null, $mail=null)
 	{
 		$user_mail = false;
 		$param = array ($this->id);
@@ -351,7 +351,8 @@ class Package
 		$this->outofdate = ! $this->outofdate;
 		if ($user_mail)
 			mail_outofdate ($user_mail, $this->id, 
-			  $this->name, $this->version, $this->arch);
+			  $this->name, $this->version, $this->arch
+			  $user_id, $reason, $mail);
 		return true;
 	}	
 
@@ -363,12 +364,26 @@ class Package
 	}
 };
 
-function mail_outofdate ($mails, $id, $name, $version, $arch)
+function mail_outofdate ($mails, $id, $name, $version, $arch, $user_id, $reason, $mail)
 {
-	$headers = 'From: afur@archlinux.fr' . "\r\n";
+	$str = "Action effectuée par ";
+	if (isset ($user_id))
+	{
+		$user = new User ($GLOBALS['conf']['db']);
+		if ($user->get_user ($user_id))
+			$str .= $user->get ('nick');
+	}
+	if (isset ($mail))
+		$str .= $mail;
+	
+	$str .= "\n\nRaison:\n" . $reason . "\n\n";
+			
+	$headers = 'MIME-Version: 1.0' . "\n" . 'Content-type: text/plain; charset=UTF-8' . "\n";
+	$headers .= 'From: afur@archlinux.fr' . "\n";
 	$subject = "[afur] Paquet $name périmé.";
 	$message = "Le paquet $name a été marqué périmé.
 
+$str
 
 Paquet: http://afur.archlinux.fr/?action=view&p=$id	
 AFUR: http://afur.archlinux.fr
