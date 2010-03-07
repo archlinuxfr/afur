@@ -324,17 +324,34 @@ class Package
 	{
 		$param = array ($this->id, $user_id);
 		$q = 'delete from pkg_sub where pkg_id = ? and user_id = ?;';
-		$this->db->execute ($q, $param);
-		return true;
+		return $this->db->execute ($q, $param);
+	}
+	
+	public function is_subscribed ($user_id)
+	{
+		$param = array ($this->id, $user_id);
+		$q = 'select * from pkg_sub where pkg_id = ? and user_id = ?;';
+		return $this->db->select ($q, $param);
 	}
 
 	public function set_outofdate ()
 	{
+		$user_mail = false;
 		$param = array ($this->id);
+		if (!$this->outofdate)
+		{
+			$q = 'select u.nick, u.mail from users u 
+			  join pkg_sub p on u.id = p.user_id
+			  where p.pkg_id = ?';
+			$user_mail = $this->db->fetch_all ($q, $param);
+		}
 		$q = 'update packages set outofdate = not outofdate, modified=now() where id = ?;';
 		if (!$this->db->execute ($q, $param))
 			return false;
 		$this->outofdate = ! $this->outofdate;
+		if ($user_mail)
+			mail_outofdate ($user_mail, $this->id, 
+			  $this->name, $this->version, $this->arch);
 		return true;
 	}	
 
@@ -346,6 +363,22 @@ class Package
 	}
 };
 
+function mail_outofdate ($mails, $id, $name, $version, $arch)
+{
+	$headers = 'From: afur@archlinux.fr' . "\r\n";
+	$subject = "[afur] Paquet $name périmé.";
+	$message = "Le paquet $name a été marqué périmé.
+
+
+Paquet: http://afur.archlinux.fr/?action=view&p=$id	
+AFUR: http://afur.archlinux.fr
+
+";
+	foreach ($mails as $value)
+	{
+		@mail ($value ['mail'], $subject, $message);
+	}	
+}
 
 
 function pkg_search (&$db, $tab, $sort=null, $asc=true)

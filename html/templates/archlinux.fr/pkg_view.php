@@ -33,6 +33,15 @@ if (!$pkg->get('user_id') and $is_connected) { ?>
 <a href="?action=disown&p=<?php echo $pkg->get ('id'); ?>">Abandonner</a>
 <?php } ?>
 </td>
+<?php if ($is_connected) { ?>
+<td>
+<?php if ($user_subscribed) { ?>
+<a href="?action=unsubscribe&p=<?php echo $pkg->get ('id'); ?>">Se désabonner</a>
+<?php } else { ?>
+<a href="?action=subscribe&p=<?php echo $pkg->get ('id'); ?>">S'abonner</a>
+<?php } ?>
+</td>
+<?php } ?>
 <?php if ($is_admin) : ?>
 <td><a href="?action=remove&p=<?php echo $pkg->get ('id'); ?>">Supprimer</a></td>
 <?php endif; ?>

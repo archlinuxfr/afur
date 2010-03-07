@@ -58,6 +58,10 @@ switch ($action)
 		if (isset ($_GET['p']))
 		{
 			$pkg = new Package ($db, $_GET['p']);
+			if ($is_connected)
+				$user_subscribed = $pkg->is_subscribed ($user_id);
+			else
+				$user_subscribed = false;
 			$template = 'pkg_view.php';
 		}
 		elseif (isset ($_GET['u']))
@@ -135,10 +139,27 @@ switch ($action)
 	case 'outofdate':
 		if (!isset ($_GET['p'])) break;
 		$pkg = new Package ($db, $_GET['p']);
-		if (!$pkg->get('outofdate') or 
-		  ($is_connected and ($user_id == $pkg->get('user_id') or $is_admin)))
-			$pkg->set_outofdate ();
-		redirect ('view', array ('p' => $_GET['p']));
+		if ($pkg->get('outofdate'))
+		{
+			if ($is_connected and 
+			  ($user_id == $pkg->get('user_id') or $is_admin))
+				$pkg->set_outofdate ();
+			redirect ('view', array ('p' => $_GET['p']));
+		}
+		else
+		{
+			if (!isset ($_POST['reason']) and 
+			  (!$is_connected or !isset($_POST['mail'])))
+				$template = 'pkg_outofdate.php';
+			else
+			{
+				if ($is_connected)
+					$pkg->set_outofdate ($user_id, $_POST['reason']);
+				else
+					$pkg->set_outofdate (null, $_POST['reason'], $_POST['mail']);
+				redirect ('view', array ('p' => $_GET['p']));
+			}
+		}		
 		break;
 	case 'adopt':
 		if (!isset ($_GET['p'])) break;
@@ -155,6 +176,22 @@ switch ($action)
 		$pkg = new Package ($db, $_GET['p']);
 		if ($pkg->get('user_id') == $user_id)
 			$pkg->disown ();
+		redirect ('view', array ('p' => $_GET['p']));
+		break;
+	case 'subscribe':
+		if (!isset ($_GET['p'])) break;
+		if (!$is_connected)
+			connect_first ($action);
+		$pkg = new Package ($db, $_GET['p']);
+		$pkg->subscribe ($user_id);
+		redirect ('view', array ('p' => $_GET['p']));
+		break;
+	case 'unsubscribe':
+		if (!isset ($_GET['p'])) break;
+		if (!$is_connected)
+			connect_first ($action);
+		$pkg = new Package ($db, $_GET['p']);
+		$pkg->unsubscribe ($user_id);
 		redirect ('view', array ('p' => $_GET['p']));
 		break;
 	case 'remove':
