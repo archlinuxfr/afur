@@ -351,7 +351,7 @@ class Package
 		$this->outofdate = ! $this->outofdate;
 		if ($user_mail)
 			mail_outofdate ($user_mail, $this->id, 
-			  $this->name, $this->version, $this->arch
+			  $this->name, $this->version, $this->arch,
 			  $user_id, $reason, $mail);
 		return true;
 	}	
@@ -369,7 +369,7 @@ function mail_outofdate ($mails, $id, $name, $version, $arch, $user_id, $reason,
 	$str = "Action effectuée par ";
 	if (isset ($user_id))
 	{
-		$user = new User ($GLOBALS['conf']['db']);
+		$user = new User ($GLOBALS['db']);
 		if ($user->get_user ($user_id))
 			$str .= $user->get ('nick');
 	}
@@ -391,7 +391,7 @@ AFUR: http://afur.archlinux.fr
 ";
 	foreach ($mails as $value)
 	{
-		@mail ($value ['mail'], $subject, $message);
+		@mail ($value ['mail'], $subject, $message, $headers);
 	}	
 }
 
