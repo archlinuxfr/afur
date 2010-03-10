@@ -167,7 +167,7 @@ fi
 
 [ -n "$PKGDEST" ] && rm -r "$PKGDEST"
 echo
-echo 'Envoi effectué"
+echo 'Envoi effectué'
 
 
 
