@@ -21,6 +21,11 @@ myapp='afur-makepkg'
 clean_first=0
 from_dir=''
 get_pkgbuild=''
+remove_pkgdest=0
+KEEP_BUILD=0
+SEND=1
+WARN_MAKEPKG_CONF=1
+
 MAKEPKG_ARGS='--config /etc/afur-makepkg.conf -sr'
 
 
@@ -42,22 +47,27 @@ usage ()
 	echo '	-c	Supprime les répertoires src/ et pkg/ avant de commencer'
 	echo '	-d	Répertoire contenant un paquet pré-construit'
 	echo '	-G	Utilisation de yaourt pour récupérer un PKGBUILD'
+	echo '	-k	Construit le paquet dans le répertoire par défaut'
+	echo '	-n	Ne pas envoyer le paquet'
 	exit 1
 }
 
-while getopts 'cd:hG:' arg; do
+while getopts 'cd:G:hkn' arg; do
 	case "${arg}" in
 		c) clean_first=1 ;;
 		d) from_dir="$OPTARG" ;;
-		h) usage ;;
 		G) get_pkgbuild="$OPTARG" ;;
+		k) KEEP_BUILD=1 ;;
+		n) SEND=0 ;;
+		h) usage ;;
+		\?) usage ;;
 		*) MAKEPKG_ARGS="$MAKEPKG_ARGS -$arg $OPTARG" ;;
 	esac
 done
 
 MAKEPKG_ARGS="$MAKEPKG_ARGS ${*:$OPTIND}"
 if [ "$WARN_MAKEPKG_CONF" -eq 1 -a -r "$HOME/.makepkg.conf" ]; then
-	echo "Vous avez une configuration personalisé pour 'makepkg': "
+	echo "Vous avez une configuration personalisée pour 'makepkg': "
 	echo "- $HOME/.makepkg.conf"
 	echo
 	echo "Certains réglages peuvent produire des paquets non compatibles."
@@ -146,11 +156,16 @@ fi
 
 if [ -z "$from_dir" ]; then
 	[ $clean_first -eq 1 ] && clean_dir
-	export PKGDEST=$(mktemp -d) 
+	if [ "$KEEP_BUILD" -eq 1 ]; then
+		[ -z "$PKGDEST" ] && export PKGDEST=$(pwd)
+	else
+		remove_pkgdest=1
+		export PKGDEST=$(mktemp -d) 
+	fi
 	if ! build; then
 		echo
 		echo "- Erreur lors de la construction du paquet."
-		echo "- Répertoire temporaire non supprimé: $PKGDEST"
+		echo "- Répertoire de compilation: $PKGDEST"
 		exit 1
 	fi
 	build_filelist "$PKGDEST"
@@ -158,16 +173,18 @@ else
 	build_filelist "$from_dir"
 fi
 
-if ! send; then
-	echo
-	echo "- Erreur lors de l'envoi des fichiers."
-	[ -n "$PKGDEST" ] && echo "- Répertoire temporaire non supprimé: $PKGDEST"
-	exit 1
-fi
+if [ "$SEND" -eq 1 ]; then
+	if ! send; then
+		echo
+		echo "- Erreur lors de l'envoi des fichiers."
+		[ -n "$PKGDEST" ] && echo "- Répertoire de compilation: $PKGDEST"
+		exit 1
+	fi
 
-[ -n "$PKGDEST" ] && rm -r "$PKGDEST"
-echo
-echo 'Envoi effectué'
+	[ $remove_pkgdest -eq 1 ] && rm -r "$PKGDEST"
+	echo
+	echo 'Envoi effectué'
+fi
 
 
 
