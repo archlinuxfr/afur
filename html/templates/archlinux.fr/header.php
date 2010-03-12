@@ -12,6 +12,7 @@ function format_date ($date)
 <title>[archlinuxfr]</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <link rel="icon" href="/templates/archlinux.fr/images/arch-francophonieb.png" type="image/png" />
+<link rel="alternate" type="application/rss+xml" title="Modifiés récemment" href="/feed.php" />
 <style type="text/css" media="screen">
 	@import url(/templates/archlinux.fr/arch.css);
 </style>
