@@ -108,7 +108,7 @@ build_filelist ()
 build ()
 {
 	makepkg $MAKEPKG_ARGS || return 1
-	for pkg in "$PKGDEST"/*; do
+	for pkg in "$PKGDEST/*$PKGEXT"; do
 		if LC_ALL=C namcap $pkg | grep -q '^Err'; then
 			echo
 			echo 'Erreur lors du passage de namcap.'
@@ -116,7 +116,7 @@ build ()
 			exit 1
 		fi
 	done
-	makepkg --source || return 1
+	makepkg --source $MAKEPKG_ARGS || return 1
 }
 
 send ()
