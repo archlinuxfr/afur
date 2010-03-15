@@ -3,6 +3,7 @@
 $conf['base_url'] = 'http://afur.archlinux.fr/';
 $conf['base'] = '/home/afur/afur';
 $conf['theme'] = 'archlinux.fr';
+$conf['results_by_page'] = 0;
 
 $conf['pkg_dir'] = $conf['base'] . '/html/pkg';
 $conf['trash_dir'] = $conf['base'] . '/trash';
@@ -38,4 +39,5 @@ $conf['pureftpd_db_passwd'] = 'toto';
  */
 $conf['pureftpd_db_delete'] = 'delete from users where name = ?;';
 $conf['pureftpd_db_insert'] = 'insert into users (name,password,uid,gid,dir) values (?,?,?,?,?);';
+
 ?>

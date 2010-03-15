@@ -39,14 +39,30 @@ switch ($action)
 			$template = 'user_connect.php';
 		break;
 	case 'search':
-		$packages = pkg_search ($db, $_GET, 
-		  (isset ($_GET['sort'])) ? $_GET['sort'] : null);
+		$sort=null;
+		if (!empty ($_GET['sort']))
+		{
+			switch ($_GET['sort'])
+			{
+				case 'n': $sort = 'p.name'; break;
+				case 'v': $sort = 'version'; break;
+				case 'd': $sort = 'description'; break;
+				case 'm': $sort = 'u.nick'; break;
+				case 'a': $sort = 'arch'; break;
+				case 'o': $sort = 'outofdate'; break;
+				case 'l': $sort = 'last_sub'; break;
+				default: break;
+			}
+		}
+		unset ($_GET['sort']);
+		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
+		unset ($_GET['p']);
+		$packages = pkg_search ($db, $_GET, $sort, true,
+		  $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
 		$search_criteria = '';
 		foreach ($_GET as $key=>$value)
-		{
-			if ($key == 'sort') continue;
 			$search_criteria .= "&$key=$value";
-		}
+		set_by_page_results ($packages);
 		$template = 'pkg_search.php';
 		break;
 	case 'list':
@@ -71,14 +87,29 @@ switch ($action)
 		}
 		break;
 	case 'search_user':
-		$users = user_search ($db, $_GET, 
-		  (isset ($_GET['sort'])) ? $_GET['sort'] : null);
+		$sort=null;
+		if (!empty ($_GET['sort']))
+		{
+			switch ($_GET['sort'])
+			{
+				case 'n': $sort = 'nick'; break;
+				case 'm': $sort = 'name'; break;
+				case 'a': $sort = 'admin'; break;
+				case 's': $sort = 'announce'; break;
+				case 'e': $sort = 'mail'; break;
+				case 'd': $sort = 'date_reg'; break;
+				default: break;
+			}
+		}
+		unset ($_GET['sort']);
+		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
+		unset ($_GET['p']);
+		$users = user_search ($db, $_GET, $sort, true,
+		  $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
 		$search_criteria = '';
 		foreach ($_GET as $key=>$value)
-		{
-			if ($key == 'sort') continue;
 			$search_criteria .= "&$key=$value";
-		}
+		set_by_page_results ($users);
 		$template = 'user_search.php';
 		break;
 	case 'profile':

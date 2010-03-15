@@ -396,8 +396,10 @@ AFUR: http://afur.archlinux.fr
 }
 
 
-function pkg_search (&$db, $tab, $sort=null, $asc=true)
+function pkg_search (&$db, $tab, $sort=null, $asc=true, $limit=null, $offset=null)
 {
+	$limit = (int) $limit;
+	$offset = (int) $offset;
 	$q = 'select ';
 	$q_select = ' p.id as pkg_id, p.name, p.description, p.version, p.arch, p.url, 
 	  p.license, p.first_sub, p.last_sub, p.modified, p.outofdate, 
@@ -405,6 +407,7 @@ function pkg_search (&$db, $tab, $sort=null, $asc=true)
 	$q_from = ' from packages p left join users u on p.user_id = u.id ';
 	$q_where = ' where true ';
 	$q_sort =  '';
+	$q_limit = '';
 	$param = array ();
 	if (!empty ($tab['q']))
 	{
@@ -450,7 +453,13 @@ function pkg_search (&$db, $tab, $sort=null, $asc=true)
 		$q_sort .= ' order by ' . $sort;
 		$q_sort .= ($asc) ? ' asc' : ' desc';
 	}
-	$q .= $q_select . $q_from . $q_where . $q_sort;
+	if ($limit > 0)
+	{
+		$limit++;
+		$q_limit .= ' limit ' . $limit;
+		$q_limit .= ' offset ' . $offset;
+	}	
+	$q .= $q_select . $q_from . $q_where . $q_sort . $q_limit;
 	return $db->fetch_all ($q, $param);
 }
 

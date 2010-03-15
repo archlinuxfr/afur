@@ -27,16 +27,17 @@
 <?php if ($is_admin) : ?>
 <div style='float: right;'><a href="?action=create">Ajouter un utilisateur</a></div>
 <?php endif; ?>
+<?php pagination(); ?>
 <table class="results" width="100%">
 <tr>
-	<th><a href='?sort=nick<?php echo $search_criteria; ?>'>Nick</a></th>
-	<th><a href='?sort=name<?php echo $search_criteria; ?>'>Nom</a></th>
-	<th><a href='?sort=admin<?php echo $search_criteria; ?>'>Admin?</a></th>
+	<th><a href='?sort=n<?php echo $search_criteria; ?>'>Nick</a></th>
+	<th><a href='?sort=m<?php echo $search_criteria; ?>'>Nom</a></th>
+	<th><a href='?sort=a<?php echo $search_criteria; ?>'>Admin?</a></th>
 	<?php if ($is_admin) : ?>
-	<th><a href='?sort=announce<?php echo $search_criteria; ?>'>Annonce?</a></th>
-	<th><a href='?sort=mail<?php echo $search_criteria; ?>'>Mail</a></th>
+	<th><a href='?sort=s<?php echo $search_criteria; ?>'>Annonce?</a></th>
+	<th><a href='?sort=e<?php echo $search_criteria; ?>'>Mail</a></th>
 	<?php endif; ?>
-	<th><a href='?sort=date_reg<?php echo $search_criteria; ?>'>Date</a></th>
+	<th><a href='?sort=d<?php echo $search_criteria; ?>'>Date</a></th>
 	<th>Paquets</th>
 </tr>
 <?php 

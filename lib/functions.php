@@ -137,4 +137,18 @@ function check_email ($email)
 	}
 	return true; 
 }
+
+
+function set_by_page_results (&$results)
+{
+	global $page_next, $page_current, $conf;
+	$page_next=false;
+	if ($conf['results_by_page'] > 0 
+	  and !empty ($results)
+	  and count ($results) > $conf['results_by_page'])
+	{
+		array_pop ($results);
+		$page_next = true;
+	}
+}
 ?>

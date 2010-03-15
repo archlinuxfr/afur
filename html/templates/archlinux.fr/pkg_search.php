@@ -48,15 +48,16 @@
 -->
 <?php if (isset ($packages)) : ?>
 <div class="greybox">
+<?php pagination(); ?>
 <table class="results" width="100%">
 <tr>
-	<th><a href='?sort=p.name<?php echo $search_criteria; ?>'>Nom</a></th>
-	<th><a href='?sort=version<?php echo $search_criteria; ?>'>Version</a></th>
-	<th><a href='?sort=description<?php echo $search_criteria; ?>'>Description</a></th>
-	<th><a href='?sort=u.nick<?php echo $search_criteria; ?>'>Mainteneur</a></th>
-	<th><a href='?sort=arch<?php echo $search_criteria; ?>'>Arch</a></th>
-	<th><a href='?sort=outofdate<?php echo $search_criteria; ?>'>Périmé?</a></th>
-	<th><a href='?sort=last_sub<?php echo $search_criteria; ?>'>Date</a></th>
+	<th><a href='?sort=n<?php echo $search_criteria; ?>'>Nom</a></th>
+	<th><a href='?sort=v<?php echo $search_criteria; ?>'>Version</a></th>
+	<th><a href='?sort=d<?php echo $search_criteria; ?>'>Description</a></th>
+	<th><a href='?sort=m<?php echo $search_criteria; ?>'>Mainteneur</a></th>
+	<th><a href='?sort=a<?php echo $search_criteria; ?>'>Arch</a></th>
+	<th><a href='?sort=o<?php echo $search_criteria; ?>'>Périmé?</a></th>
+	<th><a href='?sort=l<?php echo $search_criteria; ?>'>Date</a></th>
 </tr>
 <?php 
 $i=0;

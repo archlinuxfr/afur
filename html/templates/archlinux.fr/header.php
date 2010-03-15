@@ -4,6 +4,21 @@ function format_date ($date)
 {
 	return strftime ('%d/%m/%Y', @strtotime ($date));
 }
+function pagination ()
+{
+	global $conf, $page_current, $page_next, $search_criteria;
+	if ($conf['results_by_page']>0)
+	{
+		echo '<div style="text-align: right">';
+		if ($page_current > 1) 
+			echo "<a href='?p=" . ($page_current-1) . $search_criteria . "'>Précédente</a>&nbsp;";
+		echo "Page $page_current";
+		if ($page_next) 
+			echo "<a href='?p=" . ($page_current+1) . $search_criteria . "'>Suivante</a>&nbsp;";
+		echo "</div>";
+	}
+}
+
 ?>
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">

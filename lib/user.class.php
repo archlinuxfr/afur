@@ -135,14 +135,17 @@ function check_user ($nick, $passwd)
 		return false;
 }
 	
-function user_search (&$db, $tab, $sort=null, $asc=true)
+function user_search (&$db, $tab, $sort=null, $asc=true, $limit=null, $offset=null)
 {
+	$limit = (int) $limit;
+	$offset = (int) $offset;
 	$q = 'select ';
 	$q_select = ' u.id as user_id, u.nick, u.mail, u.name, u.admin, 
 	  u.announce, u.date_reg ';
 	$q_from = ' from users u ';
 	$q_where = ' where true ';
 	$q_sort =  '';
+	$q_limit = '';
 	$param = array ();
 	if (!empty ($tab['q']))
 	{
@@ -178,7 +181,13 @@ function user_search (&$db, $tab, $sort=null, $asc=true)
 		$q_sort .= ' order by ' . $sort;
 		$q_sort .= ($asc) ? ' asc' : ' desc';
 	}
-	$q .= $q_select . $q_from . $q_where . $q_sort;
+	if ($limit > 0)
+	{
+		$limit++;
+		$q_limit .= ' limit ' . $limit;
+		$q_limit .= ' offset ' . $offset;
+	}	
+	$q .= $q_select . $q_from . $q_where . $q_sort . $q_limit;
 	return $db->fetch_all ($q, $param);
 }
 
