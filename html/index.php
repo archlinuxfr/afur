@@ -39,9 +39,17 @@ switch ($action)
 			$template = 'user_connect.php';
 		break;
 	case 'search':
-		$sort=null;
+		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
+		unset ($_GET['p']);
+		$search_criteria = '';
+		foreach ($_GET as $key=>$value)
+			if ($key != 'sort')
+				$search_criteria .= "&$key=$value";
+		$search_criteria_s = $search_criteria;
+		$sort = 'p.modified';
 		if (!empty ($_GET['sort']))
 		{
+			$search_criteria_s .= "&sort=" . $_GET['sort'];
 			switch ($_GET['sort'])
 			{
 				case 'n': $sort = 'p.name'; break;
@@ -55,13 +63,8 @@ switch ($action)
 			}
 		}
 		unset ($_GET['sort']);
-		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
-		unset ($_GET['p']);
 		$packages = pkg_search ($db, $_GET, $sort, true,
 		  $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
-		$search_criteria = '';
-		foreach ($_GET as $key=>$value)
-			$search_criteria .= "&$key=$value";
 		set_by_page_results ($packages);
 		$template = 'pkg_search.php';
 		break;
@@ -87,9 +90,16 @@ switch ($action)
 		}
 		break;
 	case 'search_user':
-		$sort=null;
+		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
+		unset ($_GET['p']);
+		foreach ($_GET as $key=>$value)
+			if ($key != 'sort')
+				$search_criteria .= "&$key=$value";
+		$search_criteria_s = $search_criteria;
+		$sort = 'nick';
 		if (!empty ($_GET['sort']))
 		{
+			$search_criteria_s .= "&sort=" . $_GET['sort'];
 			switch ($_GET['sort'])
 			{
 				case 'n': $sort = 'nick'; break;
@@ -102,13 +112,8 @@ switch ($action)
 			}
 		}
 		unset ($_GET['sort']);
-		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
-		unset ($_GET['p']);
 		$users = user_search ($db, $_GET, $sort, true,
 		  $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
-		$search_criteria = '';
-		foreach ($_GET as $key=>$value)
-			$search_criteria .= "&$key=$value";
 		set_by_page_results ($users);
 		$template = 'user_search.php';
 		break;

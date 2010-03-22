@@ -6,15 +6,15 @@ function format_date ($date)
 }
 function pagination ()
 {
-	global $conf, $page_current, $page_next, $search_criteria;
+	global $conf, $page_current, $page_next, $search_criteria_s;
 	if ($conf['results_by_page']>0)
 	{
 		echo '<div style="text-align: right">';
 		if ($page_current > 1) 
-			echo "<a href='?p=" . ($page_current-1) . $search_criteria . "'>Précédente</a>&nbsp;";
+			echo "<a href='?p=" . ($page_current-1) . $search_criteria_s . "'>Précédente</a>&nbsp;";
 		echo "Page $page_current";
 		if ($page_next) 
-			echo "<a href='?p=" . ($page_current+1) . $search_criteria . "'>Suivante</a>&nbsp;";
+			echo "<a href='?p=" . ($page_current+1) . $search_criteria_s . "'>Suivante</a>&nbsp;";
 		echo "</div>";
 	}
 }

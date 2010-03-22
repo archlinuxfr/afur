@@ -10,26 +10,26 @@ date_default_timezone_set('Europe/Paris');
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
     <channel>
-        <title><? echo $conf['rss_title'];?></title>
-        <description><? echo $conf['rss_desc'];?></description>
-        <link><? echo $conf['rss_url'];?></link>
+        <title><?php echo $conf['rss_title'];?></title>
+        <description><?php echo $conf['rss_desc'];?></description>
+        <link><?php echo $conf['rss_url'];?></link>
         <lastBuildDate><?php echo date ('r'); ?></lastBuildDate>
-        <generator><? echo $conf['rss_generator'];?></generator>
+        <generator><?php echo $conf['rss_generator'];?></generator>
         <image>
-            <url><? echo $conf['rss_generator'];?></url>
-            <title><? echo $conf['rss_title'];?></title>
-            <link><? echo $conf['rss_url'];?></link>
-            <description><? echo $conf['rss_desc'];?></description>
+            <url><?php echo $conf['rss_generator'];?></url>
+            <title><?php echo $conf['rss_title'];?></title>
+            <link><?php echo $conf['rss_url'];?></link>
+            <description><?php echo $conf['rss_desc'];?></description>
         </image>
 <?php 
-$pkgs = pkg_search ($db, null); 
+$pkgs = pkg_search ($db, null, "p.modified", false); 
 $i=0;
 foreach ($pkgs as $pkg) :
 if ($i++>20) break;
 ?>
         <item>
             <title><?php echo $pkg['name'] . ' ' . $pkg['version'] . ' ' . $pkg['arch']; ?></title>
-            <link><? echo $conf['base_url'];?>?action=view&amp;p=<?php echo $pkg['pkg_id']; ?></link>
+            <link><?php echo $conf['base_url'];?>?action=view&amp;p=<?php echo $pkg['pkg_id']; ?></link>
             <description><?php echo $pkg['description'];?></description>
             <author><?php echo $pkg['maintainer'];?></author>
             <pubDate><?php echo date ('r', @strtotime ($pkg['last_sub']));?></pubDate>
