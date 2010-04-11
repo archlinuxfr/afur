@@ -184,8 +184,8 @@ watch_pkg ()
 	inotifywait --exclude="$REPO_NAME.db.tar.gz" -r -q -e delete --format "%w%f" -m "$PKG_DIR" | while read archive
 	do
 		[ -z "$archive" ] && continue
-		# Teste si le fichier n'a pas été effacé entre temps
-		[ ! -e "$archive" ] && continue
+		# Teste si le fichier n'a pas été effacé
+		[ ! -e "$archive" ] || continue
 		local file=${archive##*/}
 		local arch=${archive%/*}
 		local arch=${arch##*/}

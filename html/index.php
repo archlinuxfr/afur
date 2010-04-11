@@ -11,6 +11,8 @@ $db = new DB($conf['db_dsn'], $conf['db_user'], $conf['db_passwd']);
 
 
 connect ();
+$search_criteria = '';
+$search_criteria_s = '';
 
 $template = 'pkg_search.php';
 $action = 'search';
@@ -63,7 +65,7 @@ switch ($action)
 			}
 		}
 		unset ($_GET['sort']);
-		$packages = pkg_search ($db, $_GET, $sort, true,
+		$packages = pkg_search ($db, $_GET, $sort, false,
 		  $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
 		set_by_page_results ($packages);
 		$template = 'pkg_search.php';

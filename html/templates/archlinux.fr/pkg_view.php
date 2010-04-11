@@ -18,6 +18,22 @@
 <tr><td>Dernière modification:</td><td><?php echo format_date ($pkg->get ('modified')); ?></td></tr>
 </table>
 <br/>
+<table>
+<tr><td>Dépendances:</td><td>
+<?php
+foreach ($pkg->get ('depend') as $dep):
+echo "$dep&nbsp;&nbsp;&nbsp;&nbsp;";
+endforeach;
+?>
+</td></tr>
+<tr><td>Dépendances optionnelles:</td><td><?php
+foreach ($pkg->get ('optdepend') as $dep):
+echo "$dep<br/>";
+endforeach;
+?>
+</td></tr>
+</table>
+<br/>
 <table><tr>
 <td>
 <?php if (!$pkg->get ('outofdate')) { ?>
