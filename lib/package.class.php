@@ -20,6 +20,7 @@ class Package
 	private $outofdate;
 	private $depend;
 	private $optdepend;
+	private $requiredby;
 	private $del;
 	private $filename;
 
@@ -47,6 +48,7 @@ class Package
 		$this->outofdate=null;
 		$this->depend=null;
 		$this->optdepend=null;
+		$this->requiredby=null;
 		$this->del=null;
 	}
 			
@@ -87,7 +89,10 @@ class Package
 		}
 		$ret = $this->load ($this->db->fetch ($q, $param));
 		if (!empty ($id) and $ret)
-			return $this->get_depends ();
+		{
+			$this->get_depends ();
+			$this->get_requiredby ();
+		}
 		elseif (!$ret)
 			return false;
 		return true;
@@ -98,23 +103,38 @@ class Package
 		$this->depend = array();
 		$this->optdepend = array();
 		$param = array ($this->id);
-		$q = 'select concat(name,cond) as dep 
+		$q = 'select link_id, concat(name,cond) as dep 
 		  from pkg_link where pkg_id = ? and not opt;';
 		$ret = $this->db->fetch_all ($q, $param);
 		if (!$ret)
 			return false;
 		foreach ($ret as $value)
-			array_push ($this->depend, $value['dep']);
-		$q = "select concat(name,':',reason) as dep 
+			array_push ($this->depend, array ($value['dep'], $value['link_id']));
+		$q = "select link_id, concat(name,':',reason) as dep 
 		  from pkg_link where pkg_id = ? and opt;";
 		$ret = $this->db->fetch_all ($q, $param);
 		if (!$ret)
 			return false;
 		foreach ($ret as $value)
-			array_push ($this->optdepend, $value['dep']);
+			array_push ($this->optdepend, array ($value['dep'], $value['link_id']));
 		return true;
 	}
 
+	public function get_requiredby ()
+	{
+		$this->requiredby = array();
+		$param = array ($this->id);
+		$q = 'select p.id, p.name 
+		  from pkg_link pl join packages p on pl.pkg_id = p.id 
+		 where pl.link_id = ? and not opt;';
+		$ret = $this->db->fetch_all ($q, $param);
+		if (!$ret)
+			return false;
+		foreach ($ret as $value)
+			array_push ($this->requiredby, array ($value['name'], $value['id']));
+		return true;
+	}
+	
 	public function save (&$archive)
 	{
 		if ($this->get_pkg (null, $archive->get ('pkgname'), $archive->get ('arch')))

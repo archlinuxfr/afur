@@ -21,14 +21,29 @@
 <table>
 <tr><td>Dépendances:</td><td>
 <?php
-foreach ($pkg->get ('depend') as $dep):
-echo "$dep&nbsp;&nbsp;&nbsp;&nbsp;";
+foreach ($pkg->get ('depend') as $dep): 
+if (!empty($dep[1]))
+	echo "<a href='?action=view&p=".$dep[1]."'>".$dep[0]."</a>&nbsp;&nbsp;&nbsp;&nbsp;\n";
+else
+	echo "${dep[0]}&nbsp;&nbsp;&nbsp;&nbsp;";
 endforeach;
 ?>
 </td></tr>
 <tr><td>Dépendances optionnelles:</td><td><?php
-foreach ($pkg->get ('optdepend') as $dep):
-echo "$dep<br/>";
+foreach ($pkg->get ('optdepend') as $dep): 
+if (!empty($dep[1]))
+	echo "<a href='?action=view&p=".$dep[1]."'>".$dep[0]."</a>&nbsp;&nbsp;&nbsp;&nbsp;\n";
+else
+	echo "${dep[0]}&nbsp;&nbsp;&nbsp;&nbsp;";
+endforeach;
+?>
+</td></tr>
+<tr><td>Requis par:</td><td><?php
+foreach ($pkg->get ('requiredby') as $dep): 
+if (!empty($dep[1]))
+	echo "<a href='?action=view&p=".$dep[1]."'>".$dep[0]."</a>&nbsp;&nbsp;&nbsp;&nbsp;<br/>\n";
+else
+	echo "${dep[0]}<br/>";
 endforeach;
 ?>
 </td></tr>
