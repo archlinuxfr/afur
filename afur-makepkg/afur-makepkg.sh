@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-myver='0.1'
+myver='0.2'
 myapp='afur-makepkg'
 clean_first=0
 from_dir=''
@@ -24,14 +24,15 @@ get_pkgbuild=''
 remove_pkgdest=0
 KEEP_BUILD=0
 SEND=1
+SEND_FILES=0
 WARN_MAKEPKG_CONF=1
 
 MAKEPKG_ARGS='--config /etc/afur-makepkg.conf -sr'
 
 
 # TODO: avoir un makepkg.conf spécifique
-[ -r /etc/afur-makepkg.conf ] && source /etc/afur-makepkg.conf
-[ -r $HOME/.afur-makepkg.conf ] && source $HOME/.afur-makepkg.conf
+[[ -r /etc/afur-makepkg.conf ]] && source /etc/afur-makepkg.conf
+[[ -r $HOME/.afur-makepkg.conf ]] && source $HOME/.afur-makepkg.conf
 
 
 usage ()
@@ -43,40 +44,29 @@ usage ()
 	echo 'Sans options, par défaut il le construit.'
 	echo
 	echo 'Options:'
-	echo '	-h	Aide'
-	echo '	-c	Supprime les répertoires src/ et pkg/ avant de commencer'
-	echo '	-d	Répertoire contenant un paquet pré-construit'
-	echo '	-G	Utilisation de yaourt pour récupérer un PKGBUILD'
-	echo '	-k	Construit le paquet dans le répertoire par défaut'
-	echo '	-n	Ne pas envoyer le paquet'
-	exit 1
+	echo -e "\t-h        Aide"
+	echo -e "\t-c        Supprime les répertoires src/ et pkg/ avant de commencer"
+	echo -e "\t-d <dir>  Répertoire contenant un paquet pré-construit"
+	echo -e "\t-G        Utilisation de yaourt pour récupérer un PKGBUILD"
+	echo -e "\t-k        Construit le paquet dans le répertoire par défaut"
+	echo -e "\t-n        Ne pas envoyer le paquet"
+	echo -e "\t-s        Envoyer les paquets/sources indiqués."
+	exit $1
 }
 
-while getopts 'cd:G:hkn' arg; do
+while getopts 'cd:G:hkns' arg; do
 	case "${arg}" in
 		c) clean_first=1 ;;
 		d) from_dir="$OPTARG" ;;
 		G) get_pkgbuild="$OPTARG" ;;
 		k) KEEP_BUILD=1 ;;
 		n) SEND=0 ;;
-		h) usage ;;
-		\?) usage ;;
+		s) SEND_FILES=1 ;;
+		h) usage 0;;
+		\?) usage 1;;
 		*) MAKEPKG_ARGS="$MAKEPKG_ARGS -$arg $OPTARG" ;;
 	esac
 done
-
-MAKEPKG_ARGS="$MAKEPKG_ARGS ${*:$OPTIND}"
-if [ "$WARN_MAKEPKG_CONF" -eq 1 -a -r "$HOME/.makepkg.conf" ]; then
-	echo "Vous avez une configuration personalisée pour 'makepkg': "
-	echo "- $HOME/.makepkg.conf"
-	echo
-	echo "Certains réglages peuvent produire des paquets non compatibles."
-	echo
-	echo "Vous pouvez empêcher ce message de s'afficher en définissant l'option"
-	echo "'WARN_MAKEPKG_CONF=0' dans /etc/afur-makepkg.conf"
-	exit 1
-fi
-
 
 clean_dir ()
 {
@@ -90,18 +80,16 @@ clean_dir ()
 build_filelist ()
 {
 	local folder="$1"
-	[ -d "$folder" ] || return 1
+	[[ -d $folder ]] || return 1
 	file_list=()
-	OLD_IFS="$IFS"
 	for f in $(find "$folder" -type f -name "*$PKGEXT")
 	do
-		file_list=("${file_list[@]}" "$f")
+		file_list+=("$f")
 	done
 	for f in $(find "$folder" -type f -name "*$SRCEXT")
 	do
-		file_list=("${file_list[@]}" "$f")
+		file_list+=("$f")
 	done
-	IFS="$OLD_IFS"
 }
 
 
@@ -143,8 +131,31 @@ send ()
 
 file_list=()
 PKGDEST=''
-if [ -n "$get_pkgbuild" ]; then
-	if [ -z "$GET_PKGBUILD_CMD" ]; then
+
+if ((SEND_FILES)); then
+	[[ ! ${*:$OPTIND} ]] && echo 'Aucun fichier en paramètres!' && exit 1
+	file_list=()
+	for f in ${*:$OPTIND}; do
+		[[ ! -r $f ]] && echo "Impossible de lire $f." && exit 1
+		file_list+=("$f")
+	done
+else
+	MAKEPKG_ARGS="$MAKEPKG_ARGS ${*:$OPTIND}"
+	if ((WARN_MAKEPKG_CONF)) && [[ -r "$HOME/.makepkg.conf" ]]; then
+		echo "Vous avez une configuration personalisée pour 'makepkg': "
+		echo "- $HOME/.makepkg.conf"
+		echo
+		echo "Certains réglages peuvent produire des paquets non compatibles."
+		echo
+		echo "Vous pouvez empêcher ce message de s'afficher en définissant l'option"
+		echo "'WARN_MAKEPKG_CONF=0' dans /etc/afur-makepkg.conf"
+		exit 1
+	fi
+fi
+
+
+if [[ $get_pkgbuild ]]; then
+	if [[ ! $GET_PKGBUILD_CMD ]]; then
 		echo "Il faudrait définir une commande pour récupérer le PKGBUILD d'un paquet"
 		echo "dans /etc/afur-makepkg.conf"
 		echo "ex: GET_PKGBUILD_CMD='/usr/bin/yaourt -G'"
@@ -154,13 +165,14 @@ if [ -n "$get_pkgbuild" ]; then
 	from_dir=''
 fi
 
-if [ -z "$from_dir" ]; then
-	[ $clean_first -eq 1 ] && clean_dir
-	if [ "$KEEP_BUILD" -eq 1 ]; then
-		[ -z "$PKGDEST" ] && export PKGDEST=$(pwd)
+if ((! SEND_FILES)) && [[ ! $from_dir ]]; then
+	((clean_first)) && clean_dir
+	if ((KEEP_BUILD)); then
+		[[ ! $PKGDEST ]] && export PKGDEST=$(pwd)
 	else
 		remove_pkgdest=1
 		export PKGDEST=$(mktemp -d) 
+		export SRCPKGDEST=$PKGDEST 
 	fi
 	if ! build; then
 		echo
@@ -169,23 +181,21 @@ if [ -z "$from_dir" ]; then
 		exit 1
 	fi
 	build_filelist "$PKGDEST"
-else
+elif ((!SEND_FILES)) && [[ $from_dir ]]; then
 	build_filelist "$from_dir"
 fi
 
-if [ "$SEND" -eq 1 ]; then
+if ((SEND)); then
 	if ! send; then
 		echo
 		echo "- Erreur lors de l'envoi des fichiers."
-		[ -n "$PKGDEST" ] && echo "- Répertoire de compilation: $PKGDEST"
+		[[ $PKGDEST ]] && echo "- Répertoire de compilation: $PKGDEST"
 		exit 1
 	fi
 
-	[ $remove_pkgdest -eq 1 ] && rm -r "$PKGDEST"
+	((remove_pkgdest)) && rm -r "$PKGDEST"
 	echo
 	echo 'Envoi effectué'
 fi
 
-
-
-
+# vim: set ts=4 sw=4 noet:
