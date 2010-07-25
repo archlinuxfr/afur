@@ -228,7 +228,7 @@ class Package
 	public function update ()
 	{
 		$q='update packages set filename=?,description=?, version=?, arch=?, url=?, 
-		  license=?, last_sub=now(), modified=now() where id=?';
+		  license=?, last_sub=now(), modified=now(), outofdate=false where id=?';
 		$param = array ($this->filename, $this->description, $this->version, 
 		  $this->arch, $this->url, $this->license, $this->id);
 		return $this->db->execute ($q, $param);
@@ -237,7 +237,7 @@ class Package
 	public function insert ()
 	{
 		$q='insert into packages (filename,name, description, version, arch, url, license, 
-		  first_sub, last_sub, modified) values (?,?,?,?,?,?,?,now(),now(),now());';
+		  first_sub, last_sub, modified, outofdate) values (?,?,?,?,?,?,?,now(),now(),now(), false);';
 		$param = array ($this->filename,$this->name, $this->description, $this->version, $this->arch, $this->url, 
 		  $this->license);
 		$this->id = $this->db->insert ($q, $param);
