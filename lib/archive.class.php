@@ -72,6 +72,7 @@ class Archive
 				return false;
 			switch ($key)
 			{
+				case 'pkgbase': break;
 				case 'pkgname':
 					$this->pkgname = $value;
 					break;
