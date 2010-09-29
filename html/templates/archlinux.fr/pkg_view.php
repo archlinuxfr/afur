@@ -86,6 +86,7 @@
 			if (count ($pkg->get ('requiredby'))) echo "</ul>\n";
 			?>
         </div><!-- #pkgreqs -->
+        <div id="pkgfiles" class="listing"></div>
 	</div>
 <?php endif; ?>
 </div>

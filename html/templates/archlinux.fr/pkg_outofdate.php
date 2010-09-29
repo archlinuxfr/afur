@@ -1,7 +1,7 @@
 <?php include ('header.php') ?>
 <div class='box'>
 <?php if (isset ($pkg)) : ?>
-<strong><?php echo $pkg->get ('name') . ' ' . $pkg->get ('version'); ?></strong><br/><br/>
+<h3>Marquer <?php echo $pkg->get ('name') . ' ' . $pkg->get ('version'); ?> comme périmé:</h3>
 <form action="?action=outofdate&amp;p=<?php echo $pkg->get ('id'); ?>" method='post'>
 <table>
 <?php if (!$is_connected) : ?>
