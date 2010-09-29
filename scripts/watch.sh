@@ -4,7 +4,7 @@ SOFT_DIR='/home/afur/afur'
 
 UPLOAD_DIR="$SOFT_DIR/ftp"
 WORK_DIR='/tmp/afur'
-ARCH=('i686' 'x86_64')
+ARCH=('i686' 'x86_64' 'arm')
 PKG_DIR="$SOFT_DIR/html/pkg"
 PKGBUILD_DIR="$SOFT_DIR/html/pkgbuild"
 REPO_NAME='archlinuxfr'

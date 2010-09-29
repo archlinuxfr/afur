@@ -18,6 +18,7 @@
 			<option value="any">any</option>
 			<option value="i686">i686</option>
 			<option value="x86_64">x86_64</option>
+			<option value="arm">arm</option>
 		</select>
 		</td>
 		<td><input id="id_q" type="text" name="q" size="30" /></td>
