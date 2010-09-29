@@ -155,30 +155,6 @@ watch_upload ()
 	done
 }
 
-watch_upload_dir ()
-{
-	local p=
-	inotifywait -r -q -e close_write --format "%w%f" -m "$UPLOAD_DIR" >> "$1" &
-	p=$!
-	while :
-	do
-		# Attente puis revalidation des fichiers éventuellement 
-		# créés pendant la relance
-		sleep 1
-		find "$UPLOAD_DIR" -type f -name "*.tar.*" -exec touch "{}" \;
-		inotifywait -r -q -e create --format '%e' "$UPLOAD_DIR" | grep -q 'CREATE,ISDIR'
-		if [ -e "$UPLOAD_DIR/exit" ]; then
-			kill $p
-			return 0
-		fi
-		if [ $? -eq 0 ]; then
-			kill $p
-			inotifywait -r -q -e close_write --format "%w%f" -m "$UPLOAD_DIR" >> "$1" &
-			p=$!
-		fi
-	done
-}
-
 watch_pkg ()
 {
 	inotifywait --exclude="$REPO_NAME.db.tar.gz" -r -q -e delete --format "%w%f" -m "$PKG_DIR" | while read archive
@@ -209,10 +185,13 @@ tmp_upload=$(mktemp)
 safe_quit ()
 {
 	touch "$UPLOAD_DIR/exit"
+	kill $pit
 	rm "$tmp_upload"
 }
 
-watch_upload_dir "$tmp_upload" & 
+# inotify-tree, projet à part
+inotify-tree "$UPLOAD_DIR" >> "$tmp_upload" &
+pit=$! 
 watch_upload "$tmp_upload" & 
 trap "safe_quit" 0
 watch_pkg 
