@@ -1,18 +1,18 @@
 <?php
 
-$conf['base_url'] = 'http://afur.archlinux.fr/';
+$conf['base_url'] = 'http://afur.archlinux.fr';
 $conf['base'] = '/home/afur/afur';
 $conf['theme'] = 'archlinux.fr';
-$conf['results_by_page'] = 0;
+$conf['results_by_page'] = 25;
 
 $conf['pkg_dir'] = $conf['base'] . '/html/pkg';
 $conf['trash_dir'] = $conf['base'] . '/trash';
-$conf['pkg_url'] = $conf['base_url'] . 'pkg/';
-$conf['pkgbuild_url'] = $conf['base_url'] . 'pkgbuild/';
+$conf['pkg_url'] = $conf['base_url'] . '/pkg/';
+$conf['pkgbuild_url'] = $conf['base_url'] . '/pkgbuild/';
 
 $conf['lib'] = $conf['base'] . '/lib';
 $conf['templates'] = $conf['base'] . '/html/templates/' . $conf['theme'];
-$conf['templates_url'] = $conf['base_url'] . 'templates/' . $conf['theme'] . '/';
+$conf['templates_url'] = $conf['base_url'] . '/templates/' . $conf['theme'] . '/';
 
 $conf['rss_title'] = '[archlinuxfr] nouveaux paquets';
 $conf['rss_desc'] = 'Paquet binaires de la communauté francophone';
@@ -30,7 +30,7 @@ $conf['pureftpd_gid'] = 'afur';
 $conf['pureftpd_dir'] = $conf['base'] . '/ftp';
 $conf['pureftpd_db_dsn'] = 'mysql:dbname=pureftpd;host=localhost';
 $conf['pureftpd_db_user'] = 'pureftpd';
-$conf['pureftpd_db_passwd'] = 'toto';
+$conf['pureftpd_db_passwd'] = '';
 
 
 /* Delete and insert user into pure-ftpd database:
