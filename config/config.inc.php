@@ -12,13 +12,13 @@ $conf['pkgbuild_url'] = $conf['base_url'] . '/pkgbuild/';
 
 $conf['lib'] = $conf['base'] . '/lib';
 $conf['templates'] = $conf['base'] . '/html/templates/' . $conf['theme'];
-$conf['templates_url'] = $conf['base_url'] . '/templates/' . $conf['theme'] . '/';
+$conf['templates_url'] = $conf['base_url'] . '/templates/' . $conf['theme'];
 
 $conf['rss_title'] = '[archlinuxfr] nouveaux paquets';
 $conf['rss_desc'] = 'Paquet binaires de la communauté francophone';
 $conf['rss_url'] = $conf['base_url'];
 $conf['rss_generator'] = 'Afur';
-$conf['rss_image'] = $conf['templates_url'] . 'images/rss_logo.png';
+$conf['rss_image'] = $conf['templates_url'] . '/images/rss_logo.png';
 
 $conf['db_dsn'] = 'mysql:dbname=afur;host=localhost';
 $conf['db_user'] = 'root';

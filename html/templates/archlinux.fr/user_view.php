@@ -1,20 +1,20 @@
 <?php include ('header.php') ?>
-<div class='box'>
+<div id="pkgdetails" class="box">
 <?php if (isset ($user)) : ?>
-<table>
-<tr><td>Pseudo:</td><td><?php echo $user->get ('nick'); ?></td></tr>
+<table id="pkginfo">
+<tr><th>Pseudo:</th><td><?php echo $user->get ('nick'); ?></td></tr>
 <?php if ($is_connected) : ?>
-<tr><td>E-Mail:</td><td><?php echo $user->get ('mail'); ?></td></tr>
+<tr><th>E-Mail:</th><td><?php echo $user->get ('mail'); ?></td></tr>
 <?php endif; ?>
-<tr><td>Nom:</td><td><?php echo $user->get ('name'); ?></td></tr>
-<tr><td>Admin:</td><td><?php echo ($user->get ('admin')) ? 'oui' : 'non'; ?></td></tr>
-<tr><td>Date d'inscription:</td><td><?php echo format_date ($user->get ('date_reg')); ?></td></tr>
+<tr><th>Nom:</th><td><?php echo $user->get ('name'); ?></td></tr>
+<tr><th>Admin:</th><td><?php echo ($user->get ('admin')) ? 'oui' : 'non'; ?></td></tr>
+<tr><th>Date d'inscription:</th><td><?php echo format_date ($user->get ('date_reg')); ?></td></tr>
 </table>
 <br/>
 <table><tr>
-<td><a href="?action=list&u=<?php echo $user->get ('id'); ?>">Liste des paquets</a></td>
+<td><a href="?action=list&amp;u=<?php echo $user->get ('id'); ?>">Liste des paquets</a></td>
 <?php if ($is_admin) : ?>
-<td><a href="?action=profile&user_id=<?php echo $user->get ('id'); ?>">Profil</a></td>
+<td><a href="?action=profile&amp;user_id=<?php echo $user->get ('id'); ?>">Profil</a></td>
 <?php endif; ?>
 </tr></table>
 <?php endif; ?>

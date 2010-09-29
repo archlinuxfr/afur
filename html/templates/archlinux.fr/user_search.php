@@ -1,34 +1,25 @@
 <?php include ('header.php') ?>
-<div class="greybox">
-	<h4 style="text-align: right">Critère de recherche</h4>
-	<form action='.' method='get'>
-	<table>
-	<tr>
-		<td><span class="smalltext">Mainteneur: </span></td>
-		<td><input id="id_q" type="text" name="q" size="30" /></td>
-		<td>
+<div id="pkglist-search" class="box filter-criteria">
+	<h3 style="text-align: right">Critère de recherche</h3>
+	<form id="pkg-search" action='.' method='get'>
+		<fieldset>
+			<legend>Entrer les critères de recherche</legend>
+			<div><label for="id_maintainer" title="Mainteneur">Mainteneur</label> <input id="id_q" type="text" name="q" size="30" /></div>
+			<div ><label>&nbsp;</label><input title="Recherche" type="submit" name="submit" value="Search" /></div>
 			<input type='hidden' name='action' value='search_user' />
-			<input type='submit' name='submit' value='Chercher' />
-		</td>
-	</tr>
-	</table>
+		</fieldset>
 	</form>
 </div>
-<br/><br/>
-<!--
-<form action='.' method='get'>
-	<input type='text' name='q' size='30' value="" maxlength='35' />
-	<input type='hidden' name='action' value='search' />
-	<input type='submit' name='submit' value='Chercher' />
-</form>
--->
 <?php if (isset ($users)) : ?>
-<div class="greybox">
-<?php if ($is_admin) : ?>
-<div style='float: right;'><a href="?action=create">Ajouter un utilisateur</a></div>
-<?php endif; ?>
-<?php pagination(); ?>
-<table class="results" width="100%">
+<div id="pkglist-results" class="box">
+    <div id="pkglist-stats-top">
+	<?php if ($is_admin) : ?>
+	<p><a href="?action=create">Ajouter un utilisateur</a></p>
+	<?php endif; ?>
+	<?php pagination(); ?>
+	</div>
+<table class="results">
+<thead>
 <tr>
 	<th><a href='?sort=n<?php echo $search_criteria; ?>'>Nick</a></th>
 	<th><a href='?sort=m<?php echo $search_criteria; ?>'>Nom</a></th>
@@ -40,13 +31,15 @@
 	<th><a href='?sort=d<?php echo $search_criteria; ?>'>Date</a></th>
 	<th>Paquets</th>
 </tr>
+</thead>
+<tbody>
 <?php 
 $i=0;
 foreach ($users as $user) : 
 $i++;
 ?>
-<tr class='userr<?php echo $i % 2 + 1; ?>'>
-	<td><a href="?action=view&u=<?php echo $user['user_id']; ?>"><?php echo $user['nick']; ?></a></td>
+<tr class='<?php if ($i % 2 == 0) echo 'even'; else echo 'odd'; ?>'>
+	<td><a href="?action=view&amp;u=<?php echo $user['user_id']; ?>"><?php echo $user['nick']; ?></a></td>
 	<td><?php echo $user['name']; ?></td>
 	<td><?php echo ($user['admin']) ? 'oui' : '-'; ?></td>
 	<?php if ($is_admin) : ?>
@@ -54,12 +47,12 @@ $i++;
 	<td><?php echo $user['mail']; ?></td>
 	<?php endif; ?>
 	<td><?php echo format_date ($user['date_reg']);?></td>
-	<td><a href="?action=list&u=<?php echo $user['user_id']; ?>">#</a></td>
+	<td><a href="?action=list&amp;u=<?php echo $user['user_id']; ?>">#</a></td>
 </tr>
 <?php endforeach; ?>
+</tbody>
 </table>
 </div>
-<br/><br/>
 <?php endif; ?>
 
 
