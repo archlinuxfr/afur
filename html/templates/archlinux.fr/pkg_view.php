@@ -32,18 +32,18 @@ endforeach;
 <tr><td>Dépendances optionnelles:</td><td><?php
 foreach ($pkg->get ('optdepend') as $dep): 
 if (!empty($dep[1]))
-	echo "<a href='?action=view&p=".$dep[1]."'>".$dep[0]."</a>&nbsp;&nbsp;&nbsp;&nbsp;\n";
+	echo "<a href='?action=view&p=".$dep[1]."'>".$dep[0]."</a><br/>\n";
 else
-	echo "${dep[0]}&nbsp;&nbsp;&nbsp;&nbsp;";
+	echo "${dep[0]}<br/>";
 endforeach;
 ?>
 </td></tr>
 <tr><td>Requis par:</td><td><?php
 foreach ($pkg->get ('requiredby') as $dep): 
 if (!empty($dep[1]))
-	echo "<a href='?action=view&p=".$dep[1]."'>".$dep[0]."</a>&nbsp;&nbsp;&nbsp;&nbsp;<br/>\n";
+	echo "<a href='?action=view&p=".$dep[1]."'>".$dep[0]."</a>&nbsp;&nbsp;&nbsp;&nbsp;\n";
 else
-	echo "${dep[0]}<br/>";
+	echo "${dep[0]}&nbsp;&nbsp;&nbsp;&nbsp;";
 endforeach;
 ?>
 </td></tr>
