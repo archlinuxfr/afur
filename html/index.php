@@ -40,6 +40,7 @@ switch ($action)
 			$action_redirect = (isset ($_GET['redirect'])) ? $_GET['redirect'] : '';
 			$template = 'user_connect.php';
 		break;
+	case 'list':
 	case 'search':
 		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
 		unset ($_GET['p']);
@@ -68,11 +69,6 @@ switch ($action)
 		$packages = pkg_search ($db, $_GET, $sort, false,
 		  $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
 		set_by_page_results ($packages);
-		$template = 'pkg_search.php';
-		break;
-	case 'list':
-		if (!isset ($_GET['u'])) break;
-		$packages = pkg_search ($db, array ('user_id' => $_GET['u']));
 		$template = 'pkg_search.php';
 		break;
 	case 'view':

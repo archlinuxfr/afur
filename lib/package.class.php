@@ -455,10 +455,10 @@ function pkg_search (&$db, $tab, $sort=null, $asc=true, $limit=null, $offset=nul
 		$q_where .= ' and u.nick = ?';
 		array_push ($param, $tab['maintainer']);
 	}
-	if (!empty ($tab['user_id']))
+	if (!empty ($tab['u']))
 	{
 		$q_where .= ' and u.id = ?';
-		array_push ($param, $tab['user_id']);
+		array_push ($param, $tab['u']);
 	}
 	if (!empty ($tab['del']))
 		$q_where .= ' and p.del';
