@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-myver='0.2'
+myver='0.3'
 myapp='afur-makepkg'
 clean_first=0
 from_dir=''
@@ -162,18 +162,18 @@ if [[ $get_pkgbuild ]]; then
 		exit 1
 	fi
 	eval $GET_PKGBUILD_CMD "$get_pkgbuild" || exit 1
-	from_dir=''
+	from_dir="$(readlink -f ${get_pkgbuild#*/})"
 fi
 
 if ((! SEND_FILES)) && [[ ! $from_dir ]]; then
 	((clean_first)) && clean_dir
 	if ((KEEP_BUILD)); then
-		[[ ! $PKGDEST ]] && export PKGDEST=$(pwd)
+		export PKGDEST=$(pwd)
 	else
 		remove_pkgdest=1
 		export PKGDEST=$(mktemp -d) 
-		export SRCPKGDEST=$PKGDEST 
 	fi
+	export SRCPKGDEST=$PKGDEST 
 	if ! build; then
 		echo
 		echo "- Erreur lors de la construction du paquet."
