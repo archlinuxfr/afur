@@ -21,10 +21,10 @@ $conf['rss_generator'] = 'Afur';
 $conf['rss_image'] = $conf['templates_url'] . '/images/rss_logo.png';
 
 $conf['db_dsn'] = 'mysql:dbname=afur;host=localhost';
-$conf['db_user'] = 'root';
+$conf['db_user'] = 'afur';
 $conf['db_passwd'] = '';
 
-$conf['pureftpd_uri'] = 'ftp://localhost';
+$conf['pureftpd_uri'] = 'ftp://afur.archlinux.fr';
 $conf['pureftpd_uid'] = 'afur';
 $conf['pureftpd_gid'] = 'afur';
 $conf['pureftpd_dir'] = $conf['base'] . '/ftp';
