@@ -24,7 +24,7 @@
 					<option value="0">Non périmé</option>
 				</select>
 			</div>
-			<div ><label>&nbsp;</label><input title="Recherche" type="submit" name="submit" value="Search" /></div>
+			<div ><label>&nbsp;</label><input title="Recherche" type="submit" name="submit" value="Chercher" /></div>
 			<input type='hidden' name='action' value='search' />
 		</fieldset>
 	</form>
