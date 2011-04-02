@@ -74,9 +74,9 @@ class Package
 		if ($id == null and $name == null and $arch == null)
 			return false;
 		$q = 'select p.id, p.user_id, p.name, p.description, p.version, p.arch, 
-		    p.url, p.license, p.first_sub, p.last_sub, p.modified,
-			p.outofdate, p.del, p.filename, u.nick as maintainer
-			from packages p left join users u on p.user_id = u.id ';
+		       p.url, p.license, p.first_sub, p.last_sub, p.modified,
+		       p.outofdate, p.del, p.filename, u.nick as maintainer
+		  from packages p left join users u on p.user_id = u.id ';
 		if ($id==null and $name!=null and $arch!=null)
 		{
 			$q .= 'where p.name = ? and p.arch = ?';
@@ -182,11 +182,18 @@ class Package
 			return false;
 		}
 		if ($archive->get ('user_id'))
+		{
 			if (!$this->adopt ($archive->get ('user_id')))
 			{
 				$this->db->rollback ();
 				return false;
 			}
+			if (!$this->subscribe ($archive->get ('user_id')))
+			{
+				$this->db->rollback ();
+				return false;
+			}
+		}
 		if ($remove_filename)
 			$this->remove_file ($filename, $path, true);
 		$this->db->commit ();
