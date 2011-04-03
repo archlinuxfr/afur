@@ -59,6 +59,7 @@ add_any_repo ()
 		ln -s "$PKG_DIR"/any/"$1" "$PKG_DIR"/"$arch" &> /dev/null
 		add_repo "$arch" "$1"
 	done
+	add_repo "any" "$1"
 }
 
 del_repo ()
@@ -76,6 +77,7 @@ del_any_repo ()
 	do
 		rm "$PKG_DIR/$arch/$1"
 	done
+	del_repo "any" "$1"
 }
 
 pkg_archive ()
@@ -155,12 +157,13 @@ watch_upload ()
 	done
 }
 
+
 watch_pkg ()
 {
 	inotifywait --exclude="$REPO_NAME.db.tar.gz" -r -q -e delete --format "%w%f" -m "$PKG_DIR" | while read archive
 	do
 		[ -z "$archive" ] && continue
-		# Teste si le fichier n'a pas été effacé
+		# Teste si le fichier n'a pas été effacé entre temps
 		[ ! -e "$archive" ] || continue
 		local file=${archive##*/}
 		local arch=${archive%/*}
@@ -188,11 +191,13 @@ safe_quit ()
 	kill $pit
 	rm "$tmp_upload"
 }
+trap "safe_quit" 0
 
-# inotify-tree, projet à part
+# Surveillance des fichiers uploadés
 inotify-tree "$UPLOAD_DIR" >> "$tmp_upload" &
 pit=$! 
 watch_upload "$tmp_upload" & 
-trap "safe_quit" 0
+
+# Surveillance des paquets supprimés
 watch_pkg 
 
