@@ -18,7 +18,7 @@ header ('Content-type: application/rss+xml');
         <lastBuildDate><?php echo date ('r'); ?></lastBuildDate>
         <generator><?php echo $conf['rss_generator'];?></generator>
         <image>
-            <url><?php echo $conf['rss_image'];?></url>
+            <url><?php echo $conf['rss_url'];?>/templates/archlinux.fr/images/arch-francophonieb.png</url>
             <title><?php echo $conf['rss_title'];?></title>
             <link><?php echo $conf['rss_url'];?></link>
             <description><?php echo $conf['rss_desc'];?></description>
