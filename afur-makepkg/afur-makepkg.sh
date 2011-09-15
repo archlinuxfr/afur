@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-myver='0.3'
+myver='1.0'
 myapp='afur-makepkg'
 clean_first=0
 from_dir=''
