@@ -21,7 +21,7 @@ class User
 
 	public function set_nick ($nick)
 	{
-		if (!preg_match ('/^[a-z0-9]+$/', $nick))
+		if (!preg_match ('/^[A-Za-z0-9]+$/', $nick))
 			return false;
 		$this->nick = $nick;
 	}
@@ -86,7 +86,7 @@ class User
 
 	public function update ()
 	{
-		if (!$this->nick)
+		if (empty ($this->nick))
 			return false;	
 		$q='update users set nick=?, mail=?, name=?, 
 		  admin=?, announce=? where id=?';
@@ -97,8 +97,8 @@ class User
 
 	public function insert ()
 	{
-		if (!$this->nick)
-			return false;	
+		if (empty ($this->nick))
+			return false;
 		$q='insert into users (nick,mail,name,admin,announce,date_reg)
 		  values (?,?,?,?,?,now());';
 		$param = array ($this->nick, $this->mail, $this->name, $this->admin, 

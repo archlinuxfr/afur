@@ -42,7 +42,7 @@ switch ($action)
 		break;
 	case 'list':
 	case 'search':
-		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
+		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1;
 		unset ($_GET['p']);
 		$search_criteria = '';
 		foreach ($_GET as $key=>$value)
@@ -88,7 +88,7 @@ switch ($action)
 		}
 		break;
 	case 'search_user':
-		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1; 
+		$page_current = (!empty ($_GET['p'])) ? (int) $_GET['p'] : 1;
 		unset ($_GET['p']);
 		foreach ($_GET as $key=>$value)
 			if ($key != 'sort')
@@ -127,10 +127,10 @@ switch ($action)
 	case 'update':
 		if ($is_connected)
 		{
-			if (!$_POST['user_id'] and (!$is_admin 
-			  or !$_POST['passwd']))
+			if (empty ($_POST['user_id']) and (!$is_admin
+			  or empty($_POST['passwd'])))
 				break;
-			if (!$_POST['user_id'])
+			if (empty($_POST['user_id']))
 			{
 				$new_user = true;
 				$user = new User ($db);
@@ -148,13 +148,14 @@ switch ($action)
 					$user->set_mail ($_POST['mail']);
 				$user->set_name ($_POST['name']);
 				if (isset ($_POST['announce']))
-				$user->set_announce ($_POST['announce']);
+					$user->set_announce ($_POST['announce']);
 				if ($is_admin and isset ($_POST['admin']))
 					$user->set_admin ($_POST['admin']);
-				if (!$_POST['user_id'])
+				if ($new_user) {
 					$ret = $user->insert ();
-				else
+				} else {
 					$ret = $user->update ();
+				}
 				if ($ret)
 					if ($_POST['passwd'] != '')
 						$user->set_passwd ($_POST['passwd']);
@@ -176,14 +177,14 @@ switch ($action)
 		$pkg = new Package ($db, $_GET['p']);
 		if ($pkg->get('outofdate'))
 		{
-			if ($is_connected and 
+			if ($is_connected and
 			  ($user_id == $pkg->get('user_id') or $is_admin))
 				$pkg->set_outofdate ();
 			redirect ('view', array ('p' => $_GET['p']));
 		}
 		else
 		{
-			if (!isset ($_POST['reason']) and 
+			if (!isset ($_POST['reason']) and
 			  (!$is_connected or !isset($_POST['mail'])))
 				$template = 'pkg_outofdate.php';
 			else
