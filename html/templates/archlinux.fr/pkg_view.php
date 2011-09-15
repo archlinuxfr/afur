@@ -52,32 +52,38 @@
         <div id="pkgdeps" class="listing">
             <h3 title="<?php echo $pkg->get ('name') ?> a les dépendances suivantes">Dependances (<?php echo count ($pkg->get ('depend')); ?>)</h3>
 			<?php
-			if (count($pkg->get ('depend'))) echo "<ul>\n";
-			foreach ($pkg->get ('depend') as $dep): 
-			if (!empty($dep[1]))
-				echo "<li><a href='?action=view&amp;p=".$dep[1]."'>".$dep[0]."</a></li>\n";
-			else
-				echo "<li>${dep[0]}</li>";
-			endforeach;
-			if (count ($pkg->get ('depend'))) echo "</ul>\n";
+			if (count($pkg->get ('depend')))
+			{
+				 echo "<ul>\n";
+				foreach ($pkg->get ('depend') as $dep):
+				if (!empty($dep[1]))
+					echo "<li><a href='?action=view&amp;p=".$dep[1]."'>".$dep[0]."</a></li>\n";
+				else
+					echo "<li>${dep[0]}</li>";
+				endforeach;
+				echo "</ul>\n";
+			}
 			?>
             <h3 title="<?php echo $pkg->get ('name') ?> a les dépendances suivantes">Dependances optionnelles (<?php echo count ($pkg->get ('optdepend')); ?>)</h3>
 			<?php
-			if (count ($pkg->get ('optdepend'))) echo "<ul>\n";
-			foreach ($pkg->get ('optdepend') as $dep): 
-			if (!empty($dep[1]))
-				echo "<li><a href='?action=view&amp;p=".$dep[1]."'>".$dep[0]."</a></li>\n";
-			else
-				echo "<li>${dep[0]}</li>\n";
-			endforeach;
-			if (count ($pkg->get ('optdepend'))) echo "</ul>\n";
+			if (count ($pkg->get ('optdepend')))
+			{
+				echo "<ul>\n";
+				foreach ($pkg->get ('optdepend') as $dep):
+				if (!empty($dep[1]))
+					echo "<li><a href='?action=view&amp;p=".$dep[1]."'>".$dep[0]."</a></li>\n";
+				else
+					echo "<li>${dep[0]}</li>\n";
+				endforeach;
+				echo "</ul>\n";
+			}
 			?>
         </div><!-- #pkgdeps -->
         <div id="pkgreqs" class="listing">
             <h3 title="<?php echo $pkg->get ('name') ?> est requis les paquets suivants">Requis par (<?php echo count ($pkg->get ('requiredby')); ?>)</h3>
 			<?php			
 			if (count ($pkg->get ('requiredby'))) echo "<ul>\n";
-			foreach ($pkg->get ('requiredby') as $dep): 
+			foreach ($pkg->get ('requiredby') as $dep):
 			if (!empty($dep[1]))
 				echo "<li><a href='?action=view&amp;p=".$dep[1]."'>".$dep[0]."</a></li>\n";
 			else
