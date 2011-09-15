@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SOFT_DIR='/home/afur/afur'
+SOFT_DIR="$HOME/afur"
 
 UPLOAD_DIR="$SOFT_DIR/ftp"
 WORK_DIR='/tmp/afur'
@@ -16,7 +16,7 @@ PARSE_CMD="$SOFT_DIR/scripts/parse_file"
 [ -d "$WORK_DIR" ] || mkdir -p "$WORK_DIR" || exit 1
 [ -e "$UPLOAD_DIR/exit" ] && rm "$UPLOAD_DIR/exit"
 
-for arch in "${ARCH[@]}" 
+for arch in "${ARCH[@]}"
 do
 	[ -d "$PKG_DIR/$arch" ] || mkdir -p "$PKG_DIR/$arch" || exit 1
 done
@@ -24,7 +24,7 @@ done
 	
 log ()
 {
-	[ $VERBOSE -eq 1 ] && echo "$@"
+	[ $VERBOSE -eq 1 ] && echo $(date +"%Y%m%d %H:%M:%S") "$@"
 }
 
 in_array ()
@@ -52,11 +52,11 @@ add_repo ()
 
 add_any_repo ()
 {
-	for arch in "${ARCH[@]}" 
+	for arch in "${ARCH[@]}"
 	do
 		# Un ln -sf active un évenement "delete", donc ln -s &> /dev/null
 		# TODO penser à nettoyer les liens obsolètes
-		ln -s "$PKG_DIR"/any/"$1" "$PKG_DIR"/"$arch" &> /dev/null
+		ln -s ../any/"$1" "$PKG_DIR"/"$arch" &> /dev/null
 		add_repo "$arch" "$1"
 	done
 	add_repo "any" "$1"
@@ -73,7 +73,7 @@ del_repo ()
 
 del_any_repo ()
 {
-	for arch in "${ARCH[@]}" 
+	for arch in "${ARCH[@]}"
 	do
 		rm "$PKG_DIR/$arch/$1"
 	done
@@ -129,7 +129,7 @@ new_archive ()
 	if [ "$file" = "${file%pkg.tar.*}" -a "$file" = "${file%src.tar.*}" ]
 	then
 		log "- '$file' n'est pas un format connu -> suppression"
-		rm "$archive" 
+		rm "$archive"
 		return 1
 	fi
 	cd "$WORK_DIR"
@@ -150,17 +150,16 @@ new_archive ()
 
 watch_upload ()
 {
-	tail --pid=$$ -f "$1" | while read archive
+	while read -u 3 archive
 	do
-		[ "$archive" = "$UPLOAD_DIR/exit" ] && break 
+		[ "$archive" = "$UPLOAD_DIR/exit" ] && break
 		new_archive "$archive"
-	done
+	done 3< <(tail --pid=$SELF_PID -f "$1")
 }
-
 
 watch_pkg ()
 {
-	inotifywait --exclude="$REPO_NAME.db.tar.gz" -r -q -e delete --format "%w%f" -m "$PKG_DIR" | while read archive
+	while read -u 3 archive
 	do
 		[ -z "$archive" ] && continue
 		# Teste si le fichier n'a pas été effacé entre temps
@@ -180,24 +179,27 @@ watch_pkg ()
 		else
 			del_repo "$arch" "$pkg"
 		fi
-	done
+	done 3< <(tail --pid=$SELF_PID -f "$1")
 }
 
 tmp_upload=$(mktemp)
+tmp_pkg=$(mktemp)
 
 safe_quit ()
 {
 	touch "$UPLOAD_DIR/exit"
-	kill $pit
-	rm "$tmp_upload"
+	kill $pit1 $pit2
+	wait $pit1 $pit2 2> /dev/null
+	rm "$tmp_upload" "$tmp_pkg"
 }
 trap "safe_quit" 0
-
-# Surveillance des fichiers uploadés
+SELF_PID=$$
 inotify-tree "$UPLOAD_DIR" >> "$tmp_upload" &
-pit=$! 
-watch_upload "$tmp_upload" & 
-
-# Surveillance des paquets supprimés
-watch_pkg 
+pit1=$!
+inotifywait --exclude="$REPO_NAME.db.tar.gz" \
+            --exclude="$REPO_NAME.db" \
+            -r -q -e delete --format "%w%f" -m "$PKG_DIR" >> "$tmp_pkg" &
+pit2=$!
+watch_upload "$tmp_upload" &
+watch_pkg "$tmp_pkg"
 
