@@ -62,7 +62,7 @@ $i++;
 <tr class='<?php if ($i % 2 == 0) echo 'even'; else echo 'odd'; ?>'>
 	<td><a href="?action=view&amp;p=<?php echo $pkg['pkg_id']; ?>"><?php echo $pkg['name']; ?></a></td>
 	<td><?php echo $pkg['version']; ?></td>
-	<td class="wrap"><?php echo htmlentities($pkg['description']); ?></td>
+	<td class="wrap"><?php echo htmlentities($pkg['description'], null, 'UTF-8'); ?></td>
 <?php if ($pkg['user_id']) : ?>
 	<td><a href="?action=view&amp;u=<?php echo $pkg['user_id']; ?>"><?php echo $pkg['maintainer']; ?></a></td>
 <?php else : ?>

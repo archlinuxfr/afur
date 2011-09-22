@@ -34,7 +34,7 @@
 		</div>
 	</div>
 	<table id="pkginfo">
-		<tr><th>Description:</th><td class="wrap"><?php echo htmlentities ($pkg->get ('description')); ?></td></tr>
+		<tr><th>Description:</th><td class="wrap"><?php echo htmlentities ($pkg->get ('description'), null, 'UTF-8'); ?></td></tr>
 		<tr><th>Architecture:</th><td><?php echo $pkg->get ('arch'); ?></td></tr>
 		<tr><th>URL:</th><td><a href="<?php echo $pkg->get ('url'); ?>"><?php echo $pkg->get ('url'); ?></a></td></tr>
 		<tr><th>License:</th><td><?php echo $pkg->get ('license'); ?></td></tr>
