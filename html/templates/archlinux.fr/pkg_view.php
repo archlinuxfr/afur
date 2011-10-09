@@ -82,14 +82,17 @@
         <div id="pkgreqs" class="listing">
             <h3 title="<?php echo $pkg->get ('name') ?> est requis les paquets suivants">Requis par (<?php echo count ($pkg->get ('requiredby')); ?>)</h3>
 			<?php			
-			if (count ($pkg->get ('requiredby'))) echo "<ul>\n";
-			foreach ($pkg->get ('requiredby') as $dep):
-			if (!empty($dep[1]))
-				echo "<li><a href='?action=view&amp;p=".$dep[1]."'>".$dep[0]."</a></li>\n";
-			else
-				echo "<li>${dep[0]}</li>\n";
-			endforeach;
-			if (count ($pkg->get ('requiredby'))) echo "</ul>\n";
+			if (count ($pkg->get ('requiredby')))
+			{
+				echo "<ul>\n";
+				foreach ($pkg->get ('requiredby') as $dep):
+				if (!empty($dep[1]))
+					echo "<li><a href='?action=view&amp;p=".$dep[1]."'>".$dep[0]."</a></li>\n";
+				else
+					echo "<li>${dep[0]}</li>\n";
+				endforeach;
+				echo "</ul>\n";
+			}
 			?>
         </div><!-- #pkgreqs -->
         <div id="pkgfiles" class="listing"></div>
