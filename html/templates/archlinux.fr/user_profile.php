@@ -23,7 +23,7 @@
 </table>
 </form>
 <?php if ($user->get('id')) : ?>
-<table><tr><td><a href='?action=generate'>Générer le fichier de config ftp</a></td></tr></table>
+<table><tr><td><a href='?action=generate&user_id=<?php echo $user->get('id') ?>'>Générer le fichier de config ftp</a></td></tr></table>
 <?php endif; ?>
 <?php endif; ?>
 </div>

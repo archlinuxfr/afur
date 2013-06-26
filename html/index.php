@@ -184,6 +184,8 @@ switch ($action)
 		}
 		else
 		{
+			if (!$is_connected)
+				connect_first ($action);
 			if (!isset ($_POST['reason']) and
 			  (!$is_connected or !isset($_POST['mail'])))
 				$template = 'pkg_outofdate.php';
@@ -245,7 +247,10 @@ switch ($action)
 	case 'generate':
 		if (!$is_connected)
 			connect_first ($action);
-		$user = new User ($db, $user_id);
+		if ($is_admin and isset ($_GET['user_id']))
+			$user = new User ($db, $_GET['user_id']);
+		else
+			$user = new User ($db, $user_id);
 		$dbf = new DB($conf['pureftpd_db_dsn'], $conf['pureftpd_db_user'], $conf['pureftpd_db_passwd']);
 		$ftp = new Pureftpd ($dbf);
 		$str = $ftp->generate ($user->get ('nick'));
