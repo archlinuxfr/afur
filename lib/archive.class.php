@@ -26,6 +26,7 @@ class Archive
 	private $provides = array ();
 	private $backup = array ();
 	private $makepkgopt = array ();
+	private $makedepend = array ();
 
 	public function __construct (&$db)
 	{
@@ -72,7 +73,8 @@ class Archive
 				return false;
 			switch ($key)
 			{
-				case 'pkgbase': break;
+				case 'pkgbase':
+					break;
 				case 'pkgname':
 					$this->pkgname = $value;
 					break;
@@ -124,8 +126,11 @@ class Archive
 				case 'makepkgopt':
 					array_push ($this->makepkgopt, $value);
 					break;
+				case 'makedepend':
+					array_push ($this->makedepend, $value);
+					break;
 				default:
-					echo $key . " --> " . $value . "\n";
+					//echo $key . " --> " . $value . "\n";
 					return false;
 			}
 		}
