@@ -50,15 +50,20 @@ add_repo ()
 
 
 
-add_any_repo ()
+link_any_repo ()
 {
 	for arch in "${ARCH[@]}"
 	do
 		# Un ln -sf active un évenement "delete", donc ln -s &> /dev/null
 		# TODO penser à nettoyer les liens obsolètes
 		ln -s ../any/"$1" "$PKG_DIR"/"$arch" &> /dev/null
-		add_repo "$arch" "$1"
+		(($2)) && add_repo "$arch" "$1"
 	done
+}
+
+add_any_repo ()
+{
+	link_any_repo "$1" 1
 	add_repo "any" "$1"
 }
 
@@ -104,6 +109,25 @@ pkg_archive ()
 	return 0
 }
 
+sig_archive ()
+{
+	local archive=$1
+	log "+ ajout de la signature"
+	arch=${archive%%.pkg.tar.*}
+	arch=${arch##*-}
+	if [ "$arch" = "any" ]; then
+		log "+ any"
+		mv "$archive" "$PKG_DIR"/any &> /dev/null
+		link_any_repo "$1" 0
+	else
+		log "+ $arch"
+		in_array "$arch" "${ARCH[@]}" || return 1
+		log "+ copie dans le dépôt"
+		mv "$archive" "$PKG_DIR"/"$arch" &> /dev/null
+	fi
+	return 0
+}
+
 src_archive ()
 {
 	local archive="$1"
@@ -136,8 +160,9 @@ new_archive ()
 	local tmp_dir=$(mktemp -d --tmpdir="$WORK_DIR")
 	mv "$archive" "$tmp_dir" &> /dev/null
 	pushd "$tmp_dir" &> /dev/null
-	if [ "$file" != "${file%pkg.tar.*}" ]
-	then
+	if [[ "$file" != "${file%.sig}" ]]; then
+		sig_archive "$file"
+	elif [ "$file" != "${file%pkg.tar.*}" ]; then
 		pkg_archive "$file" "$user"
 	else
 		src_archive "$file"
