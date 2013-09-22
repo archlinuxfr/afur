@@ -56,12 +56,17 @@
 <tbody>
 <?php 
 $i=0;
+$pkgs_js = array ();
 foreach ($packages as $pkg) : 
 $i++;
+$pkgs_js [$pkg['name']] = array ('id' => $pkg['pkg_id'],
+				'version' => $pkg['version']
+				);
+
 ?>
 <tr class='<?php if ($i % 2 == 0) echo 'even'; else echo 'odd'; ?>'>
 	<td><a href="?action=view&amp;p=<?php echo $pkg['pkg_id']; ?>"><?php echo $pkg['name']; ?></a></td>
-	<td><?php echo $pkg['version']; ?></td>
+	<td><div id='pkg_<?php echo $pkg['pkg_id']; ?>'><?php echo $pkg['version']; ?></div></td>
 	<td class="wrap"><?php echo htmlentities($pkg['description'], null, 'UTF-8'); ?></td>
 <?php if ($pkg['user_id']) : ?>
 	<td><a href="?action=view&amp;u=<?php echo $pkg['user_id']; ?>"><?php echo $pkg['maintainer']; ?></a></td>
@@ -76,6 +81,44 @@ $i++;
 </tbody>
 </table>
 </div>
+<script>
+var aur_url='https://aur.archlinux.org';
+var aur_rpc_info = aur_url + '/rpc.php?callback=update_version&type=multiinfo';
+var pkgs = <?php echo json_encode ($pkgs_js); ?>;
+function update_version (d) {
+    if (d && d.resultcount>0) {
+        for (var i=0; i< d.resultcount; i++) {
+		if (d.results[i].Name == 'usmb') {
+			var tet =1;
+		}
+		var div = document.getElementById ('pkg_' + pkgs[d.results[i].Name]['id']);
+		var a = document.createElement ('a');
+		var span = document.createElement ('span');
+		span.innerHTML = pkgs[d.results[i].Name]['version'];
+		span.title = d.results[i].Version;
+		a.href = aur_url + '/packages/' + d.results[i].Name;
+		if (pkgs[d.results[i].Name]['version'] != d.results[i].Version) {
+			span.style.color = 'red';
+		}
+		div.innerHTML = '';
+		a.appendChild (span);
+		div.appendChild (a);
+        }
+    }
+}
+var aur_info_loaded = false;
+function load_aur_info () {
+	if (aur_info_loaded) return;
+	aur_info_loaded = true;
+	var aur_get_info = aur_rpc_info;
+	for (var i in pkgs) {
+	    aur_get_info += '&arg[]=' + i;
+	}
+	var script=document.createElement ('script');
+	script.src = aur_get_info;
+	document.body.appendChild (script);
+}
+</script>
 <?php endif; ?>
 
 
