@@ -49,7 +49,7 @@
 	<th><a href='?sort=d<?php echo $search_criteria; ?>'>Description</a></th>
 	<th><a href='?sort=m<?php echo $search_criteria; ?>'>Mainteneur</a></th>
 	<th><a href='?sort=a<?php echo $search_criteria; ?>'>Arch</a></th>
-	<th><a href='?sort=o<?php echo $search_criteria; ?>'>Périmé?</a></th>
+	<th><a href='?sort=o<?php echo $search_criteria; ?>'>Périmé?</a><a href='?sort=c'>⟲</a></th>
 	<th><a href='?sort=l<?php echo $search_criteria; ?>'>Date</a></th>
 </tr>
 </thead>
@@ -61,7 +61,8 @@ $i++;
 ?>
 <tr class='<?php if ($i % 2 == 0) echo 'even'; else echo 'odd'; ?>'>
 	<td><a href="?action=view&amp;p=<?php echo $pkg['pkg_id']; ?>"><?php echo $pkg['name']; ?></a></td>
-	<td><?php echo $pkg['version']; ?></td>
+	<td<?php echo (isset ($pkg['version_aur']) && $pkg['version_aur'] > $pkg['version']) ? ' span style="color:red"' : ''; ?>>
+	<?php echo $pkg['version'];?></td>
 	<td class="wrap"><?php echo htmlentities($pkg['description'], null, 'UTF-8'); ?></td>
 <?php if ($pkg['user_id']) : ?>
 	<td><a href="?action=view&amp;u=<?php echo $pkg['user_id']; ?>"><?php echo $pkg['maintainer']; ?></a></td>
@@ -77,6 +78,5 @@ $i++;
 </table>
 </div>
 <?php endif; ?>
-
 
 <?php include ('footer.php') ?>

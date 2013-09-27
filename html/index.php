@@ -9,7 +9,6 @@ include_once ($conf['lib'] . '/pureftpd.class.php');
 
 $db = new DB($conf['db_dsn'], $conf['db_user'], $conf['db_passwd']);
 
-
 connect ();
 $search_criteria = '';
 $search_criteria_s = '';
@@ -62,12 +61,13 @@ switch ($action)
 				case 'a': $sort = 'arch'; break;
 				case 'o': $sort = 'outofdate'; break;
 				case 'l': $sort = 'last_sub'; break;
+				case 'c': $sort='outofdate desc,a.version>p.version desc,name';
+				break;
 				default: break;
 			}
 		}
 		unset ($_GET['sort']);
-		$packages = pkg_search ($db, $_GET, $sort, false,
-		  $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
+		$packages = pkg_search ($db, $_GET, $sort, false, $conf['results_by_page'],($page_current - 1) * $conf['results_by_page']);
 		set_by_page_results ($packages);
 		$template = 'pkg_search.php';
 		break;

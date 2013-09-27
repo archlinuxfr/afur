@@ -23,6 +23,7 @@ class Package
 	private $requiredby;
 	private $del;
 	private $filename;
+	private $version_aur;
 
 
 	public function __construct (&$db, $id=null, $name=null, $arch=null)
@@ -50,6 +51,7 @@ class Package
 		$this->optdepend=null;
 		$this->requiredby=null;
 		$this->del=null;
+		$this->version_aur=null;
 	}
 			
 	public function get($var)
@@ -75,8 +77,8 @@ class Package
 			return false;
 		$q = 'select p.id, p.user_id, p.name, p.description, p.version, p.arch, 
 		       p.url, p.license, p.first_sub, p.last_sub, p.modified,
-		       p.outofdate, p.del, p.filename, u.nick as maintainer
-		  from packages p left join users u on p.user_id = u.id ';
+		       p.outofdate, p.del, p.filename, u.nick as maintainer, a.version as version_aur
+		  from packages p left join users u on p.user_id = u.id left join pkg_aur as a on p.id=a.pkg_id ';
 		if ($id==null and $name!=null and $arch!=null)
 		{
 			$q .= 'where p.name = ? and p.arch = ?';
@@ -430,8 +432,8 @@ function pkg_search (&$db, $tab, $sort=null, $asc=true, $limit=null, $offset=nul
 	$q = 'select ';
 	$q_select = ' p.id as pkg_id, p.name, p.description, p.version, p.arch, p.url, 
 	  p.license, p.first_sub, p.last_sub, p.modified, p.outofdate, 
-	  p.del, p.filename, u.id as user_id, u.nick as maintainer ';
-	$q_from = ' from packages p left join users u on p.user_id = u.id ';
+	  p.del, p.filename, u.id as user_id, u.nick as maintainer, a.version as version_aur ';
+	$q_from = ' from packages p left join users u on p.user_id = u.id left join pkg_aur a on p.id=a.pkg_id';
 	$q_where = ' where true ';
 	$q_sort =  '';
 	$q_limit = '';
