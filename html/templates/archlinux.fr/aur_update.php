@@ -1,0 +1,56 @@
+<?php
+session_start ();
+include_once ('../../../config/config.inc.php');
+include_once ($conf['lib'] . '/functions.php');
+include_once ($conf['lib'] . '/DB.class.php');
+include_once ($conf['lib'] . '/package.class.php');
+include_once ($conf['lib'] . '/user.class.php');
+include_once ($conf['lib'] . '/pureftpd.class.php');
+
+$db = new DB($conf['db_dsn'], $conf['db_user'], $conf['db_passwd']);
+
+connect ();
+
+//pas de group by, réutilisation ensuite selon arch
+$sql = 'select id,name from packages order by name;';
+$packages = $db->fetch_all ($sql, null);
+//var_dump($packages);
+
+//AurJson
+$json_url = "https://aur.archlinux.org/rpc.php?type=multiinfo";
+foreach ($packages as $index => $pkg) {
+	$json_url.="&arg[]=".$pkg['name'];
+}
+// Initializing curl
+$ch = curl_init( $json_url );
+$options = array(CURLOPT_RETURNTRANSFER => true,);
+curl_setopt_array( $ch, $options );
+$result =  json_decode(curl_exec($ch), true);
+//var_dump($result);
+
+//Mise à jour table pkg_aur
+$index=0;//index dans $packages
+foreach ($result['results'] as $aur_pkg) {
+	//var_dump($aur_pkg);
+	$name=$aur_pkg['Name'];
+	$version=$aur_pkg['Version'];
+	$found = false;//paquet trouvé dans $packages
+	$next = false;//stopper parcours liste ordonnée
+	for (;$index < count($packages);$index++) {
+		if ($found && $next) {
+			$index--;
+			break;
+		}
+		if (strcmp($packages[$index]['name'],$name) == 0) {
+			$found = true;
+			$sql = "insert into pkg_aur (pkg_id,name,version) values (?,?,?) on duplicate key update version=?;";
+			$params = array($packages[$index]['id'], $name, $version, $version);
+			$db->execute ($sql, $params);
+		} else {
+			if ($found) //vérifier les deux architectures si présentes
+				$next = true;
+		}
+	}
+}
+
+?>
