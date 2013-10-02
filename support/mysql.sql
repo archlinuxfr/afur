@@ -73,4 +73,13 @@ create table options
 	value text
 );
 
-
+create table pkg_aur
+(
+   pkg_id integer unsigned not null,
+   name varchar(64) not null,
+   version varchar(32) not null,
+   primary key (pkg_id),
+   index (pkg_id),
+   last_updated timestamp default current_timestamp on update current_timestamp,
+   foreign key (pkg_id) references packages (id) on delete cascade
+);
