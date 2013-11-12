@@ -1,15 +1,9 @@
+#!/usr/bin/env php
 <?php
-session_start ();
-include_once ('../../../config/config.inc.php');
-include_once ($conf['lib'] . '/functions.php');
+include_once ('../config/config.inc.php');
 include_once ($conf['lib'] . '/DB.class.php');
-include_once ($conf['lib'] . '/package.class.php');
-include_once ($conf['lib'] . '/user.class.php');
-include_once ($conf['lib'] . '/pureftpd.class.php');
 
 $db = new DB($conf['db_dsn'], $conf['db_user'], $conf['db_passwd']);
-
-connect ();
 
 //pas de group by, réutilisation ensuite selon arch
 $sql = 'select id,name from packages order by name;';
