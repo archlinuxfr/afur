@@ -23,9 +23,9 @@ $result =  json_decode(curl_exec($ch), true);
 //var_dump($result);
 
 //Mise à jour table pkg_aur
-$index=0;//index dans $packages
 foreach ($result['results'] as $aur_pkg) {
 	//var_dump($aur_pkg);
+	$index=0;//index dans $packages
 	$name=$aur_pkg['Name'];
 	$version=$aur_pkg['Version'];
 	$found = false;//paquet trouvé dans $packages
