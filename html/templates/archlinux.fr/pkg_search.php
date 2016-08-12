@@ -61,8 +61,16 @@ $i++;
 ?>
 <tr class='<?php if ($i % 2 == 0) echo 'even'; else echo 'odd'; ?>'>
 	<td><a href="?action=view&amp;p=<?php echo $pkg['pkg_id']; ?>"><?php echo $pkg['name']; ?></a></td>
-	<td<?php echo (isset ($pkg['version_aur']) && $pkg['version_aur'] > $pkg['version']) ? ' span style="color:red"' : ''; ?>>
-	<?php echo $pkg['version'];?></td>
+	<?php
+	if (!empty ($pkg['version_aur'])) {
+	?>
+<td title='<?php echo $pkg['version_aur'] ?>'>
+<a <?php echo ($pkg['version_aur'] > $pkg['version']) ? 'style="color:red"' : ''; ?> href='https://aur.archlinux.org/packages/<?php echo $pkg['name'] ?>'><?php echo $pkg['version'];?></a>
+</td>
+<?php } else { ?>
+<td><?php echo $pkg['version'];?></td>
+<?php } ?>
+
 	<td class="wrap"><?php echo htmlentities($pkg['description'], null, 'UTF-8'); ?></td>
 <?php if ($pkg['user_id']) : ?>
 	<td><a href="?action=view&amp;u=<?php echo $pkg['user_id']; ?>"><?php echo $pkg['maintainer']; ?></a></td>
