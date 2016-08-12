@@ -3,7 +3,7 @@
 SOFT_DIR="$HOME/afur"
 
 UPLOAD_DIR="$SOFT_DIR/ftp"
-WORK_DIR='/tmp/afur'
+WORK_DIR='$HOME/tmp/afur'
 ARCH=('i686' 'x86_64' 'arm')
 PKG_DIR="$SOFT_DIR/html/pkg"
 PKGBUILD_DIR="$SOFT_DIR/html/pkgbuild"
@@ -219,7 +219,7 @@ safe_quit ()
 }
 trap "safe_quit" 0
 SELF_PID=$$
-inotify-tree "$UPLOAD_DIR" >> "$tmp_upload" &
+$HOME/bin/inotify-tree "$UPLOAD_DIR" >> "$tmp_upload" &
 pit1=$!
 inotifywait --exclude="$REPO_NAME.db.tar.gz" \
             --exclude="$REPO_NAME.db" \
