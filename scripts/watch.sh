@@ -3,7 +3,7 @@
 SOFT_DIR="$HOME/afur"
 
 UPLOAD_DIR="$SOFT_DIR/ftp"
-WORK_DIR='$HOME/tmp/afur'
+WORK_DIR="$HOME/tmp/afur"
 ARCH=('i686' 'x86_64' 'arm')
 PKG_DIR="$SOFT_DIR/html/pkg"
 PKGBUILD_DIR="$SOFT_DIR/html/pkgbuild"

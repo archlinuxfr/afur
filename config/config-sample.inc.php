@@ -1,6 +1,6 @@
 <?php
 
-$conf['base_url'] = 'http://afur.archlinux.fr';
+$conf['base_url'] = 'https://afur.archlinux.fr';
 $conf['base'] = '/home/afur/afur';
 $conf['theme'] = 'archlinux.fr';
 $conf['results_by_page'] = 25;

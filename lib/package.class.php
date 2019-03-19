@@ -282,9 +282,9 @@ class Package
 				$depend[1] = '';
 			}
 			if ($pkg->get_pkg (null, $depend[0], $this->arch))
-				$param = array ($this->id, $pkg->id, $depend[0], $depend[1], '', false);
+				$param = array ($this->id, $pkg->id, $depend[0], $depend[1], '', 0);
 			else
-				$param = array ($this->id, null, $depend[0], $depend[1], '', false);
+				$param = array ($this->id, null, $depend[0], $depend[1], '', 0);
 			if (!$this->db->execute_prepare ('Package.update_depend', $param))
 				return false;
 		}
@@ -301,9 +301,9 @@ class Package
 				$depend[1] = '';
 			}
 			if ($pkg->get_pkg (null, $depend[0], $this->arch))
-				$param = array ($this->id, $pkg->id, $depend[0], '', $depend[1], true);
+				$param = array ($this->id, $pkg->id, $depend[0], '', $depend[1], 1);
 			else
-				$param = array ($this->id, null, $depend[0], '', $depend[1], true);
+				$param = array ($this->id, null, $depend[0], '', $depend[1], 1);
 			if (!$this->db->execute_prepare ('Package.update_depend', $param))
 				return false;
 		}	
@@ -414,8 +414,8 @@ function mail_outofdate ($mails, $id, $name, $version, $arch, $user_id, $reason,
 
 $str
 
-Paquet: http://afur.archlinux.fr/?action=view&p=$id	
-AFUR: http://afur.archlinux.fr
+Paquet: https://afur.archlinux.fr/?action=view&p=$id
+AFUR: https://afur.archlinux.fr
 
 ";
 	foreach ($mails as $value)
