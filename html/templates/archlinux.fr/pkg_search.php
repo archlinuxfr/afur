@@ -65,7 +65,7 @@ $i++;
 	if (!empty ($pkg['version_aur'])) {
 	?>
 <td title='<?php echo $pkg['version_aur'] ?>'>
-<a <?php echo ($pkg['version_aur'] > $pkg['version']) ? 'style="color:red"' : ''; ?> href='https://aur.archlinux.org/packages/<?php echo $pkg['name'] ?>'><?php echo $pkg['version'];?></a>
+<a <?php echo (version_compare($pkg['version_aur'], $pkg['version'])) ? 'style="color:red"' : ''; ?> href='https://aur.archlinux.org/packages/<?php echo $pkg['name'] ?>'><?php echo $pkg['version'];?></a>
 </td>
 <?php } else { ?>
 <td><?php echo $pkg['version'];?></td>

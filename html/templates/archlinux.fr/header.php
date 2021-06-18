@@ -49,12 +49,11 @@ function pagination ()
 			<li id="anb-home"><a href="https://archlinux.fr">Accueil</a></li>
 			<li id="anb-forums" class="selected" ><a href="https://forums.archlinux.fr/">Forum</a></li>
 
-			<li id="anb-wiki" ><a href="https://wiki.archlinux.fr">Wiki</a></li>
+			<li id="anb-wiki" ><a href="https://wiki.archlinux.org/title/Main_page_(Fran%C3%A7ais)">Wiki</a></li>
 			<li id="anb-bugs" ><a href="https://bugs.archlinux.org" title="Lien vers archlinux.org">Bugs</a></li>
 
 			<li id="anb-afur" ><a href="https://afur.archlinux.fr" title="AFUR != AUR">AFUR</a></li>
 			<li id="anb-download" ><a href="https://www.archlinux.fr/telecharger" title="">Télécharger</a></li>
-			<li id="anb-planete" ><a href="https://planet.archlinux.fr/" title="">Planète</a></li>
 		</ul>
 	</div>
 </div>

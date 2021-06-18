@@ -1,7 +1,7 @@
 <?php include ('header.php') ?>
 <div id="pkgdetails" class="box">
 <?php if (isset ($pkg)) : ?>
-	<h2>Détails du paquet: <?php echo $pkg->get ('name') . ' ' . $pkg->get ('version'); ?><?php echo (($pkg->get('version_aur') != null) && ($pkg->get('version_aur') > $pkg->get('version')) ? '('.$pkg->get('version_aur').' disponible)' : ''); ?></h2>
+  <h2>Détails du paquet: <?php echo $pkg->get ('name') . ' ' . $pkg->get ('version'); ?><?php echo (($pkg->get('version_aur') != null) && version_compare($pkg->get('version_aur'), $pkg->get('version')) ? '('.$pkg->get('version_aur').' disponible)' : ''); ?></h2>
 	<div id="detailslinks" class="listing">
 		<div id="actionlist">
 		<h4>Actions:</h4>
